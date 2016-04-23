@@ -32,4 +32,10 @@
 
 extern int wifidog_cfg_version;
 
+/* for my own purpose */
+struct client {
+    char ip[16];
+    char mac[20];
+};
+
 #endif /* _COMMON_H_ */

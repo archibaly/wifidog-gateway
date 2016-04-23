@@ -165,17 +165,12 @@ find_char(const char *str, char ch)
     return -1;
 }
 
-struct pong_client {
-    char ip[16];
-    char mac[20];
-};
-
 /*
  * example:
  *   res = "192.168.1.3|00:0c:eb:10:87:21;192.168.1.5|ea:21:09:65:20:81";
  */
 int
-pong_got_ip_mac(const char *res, int num, struct pong_client *client)
+pong_got_ip_mac(const char *res, int num, struct client *client)
 {
     int i;
     int pos = 0;
@@ -211,7 +206,7 @@ check_logout(const char *res)
     if (got_pong_value(res, "client_num", client_num, sizeof(client_num))) {
         got_pong_value(res, "client_list", client_list, sizeof(client_list));
         int client_num_i = atoi(client_num);
-        struct pong_client *pong_client = safe_malloc(client_num_i * sizeof(struct pong_client));
+        struct client *pong_client = safe_malloc(client_num_i * sizeof(struct client));
         pong_got_ip_mac(client_list, client_num_i, pong_client);
         int i;
         for (i = 0; i < client_num_i; i++) {
@@ -220,7 +215,6 @@ check_logout(const char *res)
             if (client) {
                 fw_deny(client);
                 client_list_delete(client);
-                //logout_client(client);
             }
             UNLOCK_CLIENT_LIST();
         }
