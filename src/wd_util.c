@@ -217,22 +217,30 @@ get_status_text()
 
     config = config_get_config();
 
+    t_trusted_or_black_mac *mac;
+    t_trusted_or_black_ip *ip;
     if (config->trustedmaclist != NULL) {
         pstr_cat(pstr, "\nTrusted MAC addresses:\n");
-
-        t_trusted_mac *mac;
-        for (mac = config->trustedmaclist; mac != NULL; mac = mac->next) {
+        for (mac = config->trustedmaclist; mac != NULL; mac = mac->next)
             pstr_append_sprintf(pstr, "  %s\n", mac->mac);
-        }
     }
 
     if (config->trustediplist != NULL) {
         pstr_cat(pstr, "\nTrusted IP:\n");
-
-        t_trusted_ip *ip;
-        for (ip = config->trustediplist; ip != NULL; ip = ip->next) {
+        for (ip = config->trustediplist; ip != NULL; ip = ip->next)
             pstr_append_sprintf(pstr, "  %s\n", ip->ip);
-        }
+    }
+
+    if (config->blackmaclist != NULL) {
+        pstr_cat(pstr, "\nBlack MAC addresses:\n");
+        for (mac = config->blackmaclist; mac != NULL; mac = mac->next)
+            pstr_append_sprintf(pstr, "  %s\n", mac->mac);
+    }
+
+    if (config->blackiplist != NULL) {
+        pstr_cat(pstr, "\nBlack IP:\n");
+        for (ip = config->blackiplist; ip != NULL; ip = ip->next)
+            pstr_append_sprintf(pstr, "  %s\n", ip->ip);
     }
 
     pstr_cat(pstr, "\nAuthentication servers:\n");

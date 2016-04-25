@@ -131,20 +131,20 @@ typedef struct _firewall_ruleset_t {
 } t_firewall_ruleset;
 
 /**
- * Trusted MAC Addresses
+ * Trusted or Black MAC Addresses
  */
-typedef struct _trusted_mac_t {
+typedef struct _trusted_or_black_mac_t {
     char *mac;
-    struct _trusted_mac_t *next;
-} t_trusted_mac;
+    struct _trusted_or_black_mac_t *next;
+} t_trusted_or_black_mac;
 
 /**
- * Trusted IP
+ * Trusted or Black IP
  */
-typedef struct _trusted_ip_t {
+typedef struct _trusted_or_black_ip_t {
     char *ip;
-    struct _trusted_ip_t *next;
-} t_trusted_ip;
+    struct _trusted_or_black_ip_t *next;
+} t_trusted_or_black_ip;
 
 /**
  * Popular Servers
@@ -158,36 +158,38 @@ typedef struct _popular_server_t {
  * Configuration structure
  */
 typedef struct {
-    char *configfile;                   /**< @brief name of the config file */
-    char *htmlmsgfile;                  /**< @brief name of the HTML file used for messages */
-    char *wdctl_sock;                   /**< @brief wdctl path to socket */
-    char *internal_sock;                /**< @brief internal path to socket */
-    int deltatraffic;                   /**< @brief reset each user's traffic (Outgoing and Incoming) value after each Auth operation. */
-    int daemon;                         /**< @brief if daemon > 0, use daemon mode */
-    char *pidfile;                      /**< @brief pid file path of wifidog */
-    char *external_interface;           /**< @brief External network interface name for firewall rules */
-    char *gw_id;                        /**< @brief ID of the Gateway, sent to central server */
-    char *gw_interface;                 /**< @brief Interface we will accept connections on */
-    char *gw_address;                   /**< @brief Internal IP address for our web server */
-    int gw_port;                        /**< @brief Port the webserver will run on */
-    t_auth_serv *auth_servers;          /**< @brief Auth servers list */
-    char *httpdname;                    /**< @brief Name the web server will return when replying to a request */
-    int httpdmaxconn;                   /**< @brief Used by libhttpd, not sure what it does */
-    char *httpdrealm;                   /**< @brief HTTP Authentication realm */
-    char *httpdusername;                /**< @brief Username for HTTP authentication */
-    char *httpdpassword;                /**< @brief Password for HTTP authentication */
-    int clienttimeout;                  /**< @brief How many CheckIntervals before a client must be re-authenticated */
-    int checkinterval;                  /**< @brief Frequency the the client timeout check thread will run. */
-    int proxy_port;                     /**< @brief Transparent proxy port (0 to disable) */
-    char *ssl_certs;                    /**< @brief Path to SSL certs for auth server verification */
-    int ssl_verify;                     /**< @brief boolean, whether to enable auth server certificate verification */
-    char *ssl_cipher_list;              /**< @brief List of SSL ciphers allowed. Optional. */
-    int ssl_use_sni;                    /**< @brief boolean, whether to enable auth server for server name indication, the TLS extension */
-    t_firewall_ruleset *rulesets;       /**< @brief firewall rules */
-    t_trusted_mac *trustedmaclist;      /**< @brief list of trusted macs */
-    t_trusted_ip *trustediplist;        /**< @brief list of trusted ips */
-    char *arp_table_path;               /**< @brief Path to custom ARP table, formatted like /proc/net/arp */
-    t_popular_server *popular_servers;  /**< @brief list of popular servers */
+    char *configfile;                           /**< @brief name of the config file */
+    char *htmlmsgfile;                          /**< @brief name of the HTML file used for messages */
+    char *wdctl_sock;                           /**< @brief wdctl path to socket */
+    char *internal_sock;                        /**< @brief internal path to socket */
+    int deltatraffic;                           /**< @brief reset each user's traffic (Outgoing and Incoming) value after each Auth operation. */
+    int daemon;                                 /**< @brief if daemon > 0, use daemon mode */
+    char *pidfile;                              /**< @brief pid file path of wifidog */
+    char *external_interface;                   /**< @brief External network interface name for firewall rules */
+    char *gw_id;                                /**< @brief ID of the Gateway, sent to central server */
+    char *gw_interface;                         /**< @brief Interface we will accept connections on */
+    char *gw_address;                           /**< @brief Internal IP address for our web server */
+    int gw_port;                                /**< @brief Port the webserver will run on */
+    t_auth_serv *auth_servers;                  /**< @brief Auth servers list */
+    char *httpdname;                            /**< @brief Name the web server will return when replying to a request */
+    int httpdmaxconn;                           /**< @brief Used by libhttpd, not sure what it does */
+    char *httpdrealm;                           /**< @brief HTTP Authentication realm */
+    char *httpdusername;                        /**< @brief Username for HTTP authentication */
+    char *httpdpassword;                        /**< @brief Password for HTTP authentication */
+    int clienttimeout;                          /**< @brief How many CheckIntervals before a client must be re-authenticated */
+    int checkinterval;                          /**< @brief Frequency the the client timeout check thread will run. */
+    int proxy_port;                             /**< @brief Transparent proxy port (0 to disable) */
+    char *ssl_certs;                            /**< @brief Path to SSL certs for auth server verification */
+    int ssl_verify;                             /**< @brief boolean, whether to enable auth server certificate verification */
+    char *ssl_cipher_list;                      /**< @brief List of SSL ciphers allowed. Optional. */
+    int ssl_use_sni;                            /**< @brief boolean, whether to enable auth server for server name indication, the TLS extension */
+    t_firewall_ruleset *rulesets;               /**< @brief firewall rules */
+    t_trusted_or_black_mac *trustedmaclist;     /**< @brief list of trusted macs */
+    t_trusted_or_black_ip *trustediplist;       /**< @brief list of trusted ips */
+    t_trusted_or_black_mac *blackmaclist;       /**< @brief list of black macs */
+    t_trusted_or_black_ip *blackiplist;         /**< @brief list of black ips */
+    char *arp_table_path;                       /**< @brief Path to custom ARP table, formatted like /proc/net/arp */
+    t_popular_server *popular_servers;          /**< @brief list of popular servers */
 } s_config;
 
 /** @brief Get the current gateway configuration */

@@ -98,6 +98,8 @@ typedef enum {
     oFirewallRuleSet,
     oTrustedMACList,
     oTrustedIPList,
+    oBlackMACList,
+    oBlackIPList,
     oPopularServers,
     oHtmlMessageFile,
     oProxyPort,
@@ -146,6 +148,8 @@ static const struct {
     "firewallrule", oFirewallRule}, {
     "trustedmaclist", oTrustedMACList}, {
     "trustediplist", oTrustedIPList}, {
+    "blackmaclist", oBlackMACList}, {
+    "blackiplist", oBlackIPList}, {
     "popularservers", oPopularServers}, {
     "htmlmessagefile", oHtmlMessageFile}, {
     "proxyport", oProxyPort}, {
@@ -162,6 +166,8 @@ static int _parse_firewall_rule(const char *, char *);
 static void parse_firewall_ruleset(const char *, FILE *, const char *, int *);
 static void parse_trusted_mac_list(const char *);
 static void parse_trusted_ip_list(const char *);
+static void parse_black_mac_list(const char *);
+static void parse_black_ip_list(const char *);
 static void parse_popular_servers(const char *);
 static void validate_popular_servers(void);
 static void add_popular_server(const char *);
@@ -204,6 +210,8 @@ config_init(void)
     config.rulesets = NULL;
     config.trustedmaclist = NULL;
     config.trustediplist = NULL;
+    config.blackmaclist = NULL;
+    config.blackiplist = NULL;
     config.popular_servers = NULL;
     config.proxy_port = 0;
     config.ssl_certs = safe_strdup(DEFAULT_AUTHSERVSSLCERTPATH);
@@ -742,6 +750,12 @@ config_read(const char *filename)
                 case oTrustedIPList:
                     parse_trusted_ip_list(p1);
                     break;
+                case oBlackMACList:
+                    parse_black_mac_list(p1);
+                    break;
+                case oBlackIPList:
+                    parse_black_ip_list(p1);
+                    break;
                 case oPopularServers:
                     parse_popular_servers(rawarg);
                     break;
@@ -884,7 +898,7 @@ parse_trusted_mac_list(const char *ptr)
     char *ptrcopy = NULL;
     char *possiblemac = NULL;
     char *mac = NULL;
-    t_trusted_mac *p = NULL;
+    t_trusted_or_black_mac *p = NULL;
 
     debug(LOG_DEBUG, "Parsing string [%s] for trusted MAC addresses", ptr);
 
@@ -909,7 +923,7 @@ parse_trusted_mac_list(const char *ptr)
                 debug(LOG_DEBUG, "Adding MAC address [%s] to trusted list", mac);
 
                 if (config.trustedmaclist == NULL) {
-                    config.trustedmaclist = safe_malloc(sizeof(t_trusted_mac));
+                    config.trustedmaclist = safe_malloc(sizeof(t_trusted_or_black_mac));
                     config.trustedmaclist->mac = safe_strdup(mac);
                     config.trustedmaclist->next = NULL;
                 } else {
@@ -930,13 +944,84 @@ parse_trusted_mac_list(const char *ptr)
                         p = p->next;
                     }
                     if (!skipmac) {
-                        p->next = safe_malloc(sizeof(t_trusted_mac));
+                        p->next = safe_malloc(sizeof(t_trusted_or_black_mac));
                         p = p->next;
                         p->mac = safe_strdup(mac);
                         p->next = NULL;
                     } else {
                         debug(LOG_ERR,
                               "MAC address [%s] already on trusted list. See option TrustedMACList in wifidog.conf file ",
+                              mac);
+                    }
+                }
+            }
+        }
+    }
+
+    free(ptrcopy);
+
+    free(mac);
+}
+
+static void
+parse_black_mac_list(const char *ptr)
+{
+    char *ptrcopy = NULL;
+    char *possiblemac = NULL;
+    char *mac = NULL;
+    t_trusted_or_black_mac *p = NULL;
+
+    debug(LOG_DEBUG, "Parsing string [%s] for black MAC addresses", ptr);
+
+    mac = safe_malloc(18);
+
+    /* strsep modifies original, so let's make a copy */
+    ptrcopy = safe_strdup(ptr);
+
+    while ((possiblemac = strsep(&ptrcopy, ","))) {
+        /* check for valid format */
+        if (!check_mac_format(possiblemac)) {
+            debug(LOG_ERR,
+                  "[%s] not a valid MAC address to trust. See option BlackMACList in wifidog.conf for correct this mistake.",
+                  possiblemac);
+            free(ptrcopy);
+            free(mac);
+            return;
+        } else {
+            if (sscanf(possiblemac, " %17[A-Fa-f0-9:]", mac) == 1) {
+                /* Copy mac to the list */
+
+                debug(LOG_DEBUG, "Adding MAC address [%s] to black list", mac);
+
+                if (config.blackmaclist == NULL) {
+                    config.blackmaclist = safe_malloc(sizeof(t_trusted_or_black_mac));
+                    config.blackmaclist->mac = safe_strdup(mac);
+                    config.blackmaclist->next = NULL;
+                } else {
+                    int skipmac;
+                    /* Advance to the last entry */
+                    p = config.blackmaclist;
+                    skipmac = 0;
+                    /* Check before loop to handle case were mac is a duplicate
+                     * of the first and only item in the list so far.
+                     */
+                    if (0 == strcmp(p->mac, mac)) {
+                        skipmac = 1;
+                    }
+                    while (p->next != NULL) {
+                        if (0 == strcmp(p->mac, mac)) {
+                            skipmac = 1;
+                        }
+                        p = p->next;
+                    }
+                    if (!skipmac) {
+                        p->next = safe_malloc(sizeof(t_trusted_or_black_mac));
+                        p = p->next;
+                        p->mac = safe_strdup(mac);
+                        p->next = NULL;
+                    } else {
+                        debug(LOG_ERR,
+                              "MAC address [%s] already on black list. See option BlackMACList in wifidog.conf file ",
                               mac);
                     }
                 }
@@ -965,7 +1050,7 @@ parse_trusted_ip_list(const char *ptr)
     char *ptrcopy = NULL;
     char *possibleip = NULL;
     char *ip = NULL;
-    t_trusted_ip *p = NULL;
+    t_trusted_or_black_ip *p = NULL;
 
     debug(LOG_DEBUG, "Parsing string [%s] for trusted IP", ptr);
 
@@ -990,7 +1075,7 @@ parse_trusted_ip_list(const char *ptr)
                 debug(LOG_DEBUG, "Adding IP [%s] to trusted list", ip);
 
                 if (config.trustediplist == NULL) {
-                    config.trustediplist = safe_malloc(sizeof(t_trusted_ip));
+                    config.trustediplist = safe_malloc(sizeof(t_trusted_or_black_ip));
                     config.trustediplist->ip = safe_strdup(ip);
                     config.trustediplist->next = NULL;
                 } else {
@@ -1011,13 +1096,84 @@ parse_trusted_ip_list(const char *ptr)
                         p = p->next;
                     }
                     if (!skipip) {
-                        p->next = safe_malloc(sizeof(t_trusted_ip));
+                        p->next = safe_malloc(sizeof(t_trusted_or_black_ip));
                         p = p->next;
                         p->ip = safe_strdup(ip);
                         p->next = NULL;
                     } else {
                         debug(LOG_ERR,
                               "IP [%s] already on trusted list. See option TrustedIPList in wifidog.conf file ",
+                              ip);
+                    }
+                }
+            }
+        }
+    }
+
+    free(ptrcopy);
+
+    free(ip);
+}
+
+static void
+parse_black_ip_list(const char *ptr)
+{
+    char *ptrcopy = NULL;
+    char *possibleip = NULL;
+    char *ip = NULL;
+    t_trusted_or_black_ip *p = NULL;
+
+    debug(LOG_DEBUG, "Parsing string [%s] for black IP", ptr);
+
+    ip = safe_malloc(16);
+
+    /* strsep modifies original, so let's make a copy */
+    ptrcopy = safe_strdup(ptr);
+
+    while ((possibleip = strsep(&ptrcopy, ","))) {
+        /* check for valid format */
+        if (!check_ip_format(possibleip)) {
+            debug(LOG_ERR,
+                  "[%s] not a valid IP to trust. See option BlackIPList in wifidog.conf for correct this mistake.",
+                  possibleip);
+            free(ptrcopy);
+            free(ip);
+            return;
+        } else {
+            if (sscanf(possibleip, " %15[0-9.]", ip) == 1) {
+                /* Copy mac to the list */
+
+                debug(LOG_DEBUG, "Adding IP [%s] to black list", ip);
+
+                if (config.blackiplist == NULL) {
+                    config.blackiplist = safe_malloc(sizeof(t_trusted_or_black_ip));
+                    config.blackiplist->ip = safe_strdup(ip);
+                    config.blackiplist->next = NULL;
+                } else {
+                    int skipip;
+                    /* Advance to the last entry */
+                    p = config.blackiplist;
+                    skipip = 0;
+                    /* Check before loop to handle case were ip is a duplicate
+                     * of the first and only item in the list so far.
+                     */
+                    if (0 == strcmp(p->ip, ip)) {
+                        skipip = 1;
+                    }
+                    while (p->next != NULL) {
+                        if (0 == strcmp(p->ip, ip)) {
+                            skipip = 1;
+                        }
+                        p = p->next;
+                    }
+                    if (!skipip) {
+                        p->next = safe_malloc(sizeof(t_trusted_or_black_ip));
+                        p = p->next;
+                        p->ip = safe_strdup(ip);
+                        p->next = NULL;
+                    } else {
+                        debug(LOG_ERR,
+                              "IP [%s] already on black list. See option BlackIPList in wifidog.conf file ",
                               ip);
                     }
                 }

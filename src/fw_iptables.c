@@ -285,13 +285,26 @@ iptables_fw_init(void)
         iptables_do_command("-t mangle -I PREROUTING 1 -i %s -j " CHAIN_AUTH_IS_DOWN, config->gw_interface);    /* this rule must be last in the chain */
     iptables_do_command("-t mangle -I POSTROUTING 1 -o %s -j " CHAIN_INCOMING, config->gw_interface);
 
-    t_trusted_mac *mac;
+    t_trusted_or_black_mac *mac;
+    t_trusted_or_black_ip *ip;
+    /* white list */
     for (mac = config->trustedmaclist; mac != NULL; mac = mac->next)
         iptables_do_command("-t mangle -A " CHAIN_TRUSTED " -m mac --mac-source %s -j MARK --set-mark %d", mac->mac, FW_MARK_KNOWN);
 
-    t_trusted_ip *ip;
     for (ip = config->trustediplist; ip != NULL; ip = ip->next)
         iptables_do_command("-t mangle -A " CHAIN_TRUSTED " -s %s -j MARK --set-mark %d", ip->ip, FW_MARK_KNOWN);
+
+    /* black list */
+    for (mac = config->blackmaclist; mac != NULL; mac = mac->next) {
+        debug(LOG_INFO, "black mac = %s", mac->mac);
+        iptables_do_command("-I INPUT -m mac --mac-source %s -j DROP", mac->mac);
+        iptables_do_command("-I FORWARD -m mac --mac-source %s -j DROP", mac->mac);
+    }
+    for (ip = config->blackiplist; ip != NULL; ip = ip->next) {
+        debug(LOG_INFO, "black ip = %s", ip->ip);
+        iptables_do_command("-I INPUT -s %s -j DROP", ip->ip);
+        iptables_do_command("-I FORWARD -s %s -j DROP", ip->ip);
+    }
 
     /*
      *
