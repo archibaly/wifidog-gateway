@@ -287,8 +287,8 @@ fw_sync_with_authserver(void)
     client_list_dup(&worklist);
     UNLOCK_CLIENT_LIST();
 
-    struct client logout_clients[4];
-    struct client counters_clients[4];
+    struct client logout_clients[MAX_CLIENTS];
+    struct client counters_clients[MAX_CLIENTS];
     int logout_cnt = 0;
     int counters_cnt = 0;
 
@@ -297,7 +297,7 @@ fw_sync_with_authserver(void)
         icmp_ping(p1->ip);
         client_copy(counters_clients + counters_cnt, p1);
         counters_cnt++;
-        if (counters_cnt == 4) {
+        if (counters_cnt == MAX_CLIENTS) {
             if (config->auth_servers != NULL)
                 auth_server_nrequest(&authresponse, REQUEST_TYPE_COUNTERS, counters_cnt, counters_clients);
             counters_cnt = 0;
@@ -316,7 +316,7 @@ fw_sync_with_authserver(void)
                 client_list_remove(tmp);
                 client_free_node(tmp);
 
-                if (logout_cnt == 4) {
+                if (logout_cnt == MAX_CLIENTS) {
                     logout_nclient(logout_cnt, logout_clients);
                     logout_cnt = 0;
                 }

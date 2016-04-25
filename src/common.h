@@ -29,6 +29,8 @@
 
 /** @brief Read buffer for socket read? */
 #define MAX_BUF	4096
+/** @brief Max clients request one time */
+#define MAX_CLIENTS	4
 
 extern int wifidog_cfg_version;
 
