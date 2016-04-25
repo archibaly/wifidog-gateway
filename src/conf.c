@@ -97,6 +97,7 @@ typedef enum {
     oFirewallRule,
     oFirewallRuleSet,
     oTrustedMACList,
+    oTrustedIPList,
     oPopularServers,
     oHtmlMessageFile,
     oProxyPort,
@@ -144,6 +145,7 @@ static const struct {
     "firewallruleset", oFirewallRuleSet}, {
     "firewallrule", oFirewallRule}, {
     "trustedmaclist", oTrustedMACList}, {
+    "trustediplist", oTrustedIPList}, {
     "popularservers", oPopularServers}, {
     "htmlmessagefile", oHtmlMessageFile}, {
     "proxyport", oProxyPort}, {
@@ -159,6 +161,7 @@ static void parse_auth_server(FILE *, const char *, int *);
 static int _parse_firewall_rule(const char *, char *);
 static void parse_firewall_ruleset(const char *, FILE *, const char *, int *);
 static void parse_trusted_mac_list(const char *);
+static void parse_trusted_ip_list(const char *);
 static void parse_popular_servers(const char *);
 static void validate_popular_servers(void);
 static void add_popular_server(const char *);
@@ -200,6 +203,7 @@ config_init(void)
     config.internal_sock = safe_strdup(DEFAULT_INTERNAL_SOCK);
     config.rulesets = NULL;
     config.trustedmaclist = NULL;
+    config.trustediplist = NULL;
     config.popular_servers = NULL;
     config.proxy_port = 0;
     config.ssl_certs = safe_strdup(DEFAULT_AUTHSERVSSLCERTPATH);
@@ -735,6 +739,9 @@ config_read(const char *filename)
                 case oTrustedMACList:
                     parse_trusted_mac_list(p1);
                     break;
+                case oTrustedIPList:
+                    parse_trusted_ip_list(p1);
+                    break;
                 case oPopularServers:
                     parse_popular_servers(rawarg);
                     break;
@@ -940,7 +947,87 @@ parse_trusted_mac_list(const char *ptr)
     free(ptrcopy);
 
     free(mac);
+}
 
+int
+check_ip_format(char *possibleip)
+{
+    char hex3[4];
+    return
+        sscanf(possibleip,
+               "%3[0-9].%3[0-9].%3[0-9].%3[0-9]",
+               hex3, hex3, hex3, hex3) == 4;
+}
+
+static void
+parse_trusted_ip_list(const char *ptr)
+{
+    char *ptrcopy = NULL;
+    char *possibleip = NULL;
+    char *ip = NULL;
+    t_trusted_ip *p = NULL;
+
+    debug(LOG_DEBUG, "Parsing string [%s] for trusted IP", ptr);
+
+    ip = safe_malloc(16);
+
+    /* strsep modifies original, so let's make a copy */
+    ptrcopy = safe_strdup(ptr);
+
+    while ((possibleip = strsep(&ptrcopy, ","))) {
+        /* check for valid format */
+        if (!check_ip_format(possibleip)) {
+            debug(LOG_ERR,
+                  "[%s] not a valid IP to trust. See option TrustedIPList in wifidog.conf for correct this mistake.",
+                  possibleip);
+            free(ptrcopy);
+            free(ip);
+            return;
+        } else {
+            if (sscanf(possibleip, " %15[0-9.]", ip) == 1) {
+                /* Copy mac to the list */
+
+                debug(LOG_DEBUG, "Adding IP [%s] to trusted list", ip);
+
+                if (config.trustediplist == NULL) {
+                    config.trustediplist = safe_malloc(sizeof(t_trusted_ip));
+                    config.trustediplist->ip = safe_strdup(ip);
+                    config.trustediplist->next = NULL;
+                } else {
+                    int skipip;
+                    /* Advance to the last entry */
+                    p = config.trustediplist;
+                    skipip = 0;
+                    /* Check before loop to handle case were ip is a duplicate
+                     * of the first and only item in the list so far.
+                     */
+                    if (0 == strcmp(p->ip, ip)) {
+                        skipip = 1;
+                    }
+                    while (p->next != NULL) {
+                        if (0 == strcmp(p->ip, ip)) {
+                            skipip = 1;
+                        }
+                        p = p->next;
+                    }
+                    if (!skipip) {
+                        p->next = safe_malloc(sizeof(t_trusted_ip));
+                        p = p->next;
+                        p->ip = safe_strdup(ip);
+                        p->next = NULL;
+                    } else {
+                        debug(LOG_ERR,
+                              "IP [%s] already on trusted list. See option TrustedIPList in wifidog.conf file ",
+                              ip);
+                    }
+                }
+            }
+        }
+    }
+
+    free(ptrcopy);
+
+    free(ip);
 }
 
 /** @internal

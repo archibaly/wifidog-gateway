@@ -84,19 +84,17 @@ extern pthread_mutex_t config_mutex;
  * Information about the authentication server
  */
 typedef struct _auth_serv_t {
-    char *authserv_hostname;    /**< @brief Hostname of the central server */
-    char *authserv_path;        /**< @brief Path where wifidog resides */
+    char *authserv_hostname;                    /**< @brief Hostname of the central server */
+    char *authserv_path;                        /**< @brief Path where wifidog resides */
     char *authserv_login_script_path_fragment;  /**< @brief This is the script the user will be sent to for login. */
     char *authserv_portal_script_path_fragment; /**< @brief This is the script the user will be sent to after a successfull login. */
     char *authserv_msg_script_path_fragment;    /**< @brief This is the script the user will be sent to upon error to read a readable message. */
     char *authserv_ping_script_path_fragment;   /**< @brief This is the ping heartbeating script. */
     char *authserv_auth_script_path_fragment;   /**< @brief This is the script that talks the wifidog gateway protocol. */
-    int authserv_http_port;     /**< @brief Http port the central server
-				     listens on */
-    int authserv_ssl_port;      /**< @brief Https port the central server
-				     listens on */
-    int authserv_use_ssl;       /**< @brief Use SSL or not */
-    char *last_ip;      /**< @brief Last ip used by authserver */
+    int authserv_http_port;                     /**< @brief Http port the central server listens on */
+    int authserv_ssl_port;                      /**< @brief Https port the central server listens on */
+    int authserv_use_ssl;                       /**< @brief Use SSL or not */
+    char *last_ip;                              /**< @brief Last ip used by authserver */
     struct _auth_serv_t *next;
 } t_auth_serv;
 
@@ -119,7 +117,7 @@ typedef struct _firewall_rule_t {
     char *protocol;             /**< @brief tcp, udp, etc ... */
     char *port;                 /**< @brief Port to block/allow */
     char *mask;                 /**< @brief Mask for the rule *destination* */
-    int mask_is_ipset; /**< @brief *destination* is ipset  */
+    int mask_is_ipset;          /**< @brief *destination* is ipset  */
     struct _firewall_rule_t *next;
 } t_firewall_rule;
 
@@ -141,6 +139,14 @@ typedef struct _trusted_mac_t {
 } t_trusted_mac;
 
 /**
+ * Trusted IP
+ */
+typedef struct _trusted_ip_t {
+    char *ip;
+    struct _trusted_ip_t *next;
+} t_trusted_ip;
+
+/**
  * Popular Servers
  */
 typedef struct _popular_server_t {
@@ -152,47 +158,36 @@ typedef struct _popular_server_t {
  * Configuration structure
  */
 typedef struct {
-    char *configfile;       /**< @brief name of the config file */
-    char *htmlmsgfile;          /**< @brief name of the HTML file used for messages */
-    char *wdctl_sock;           /**< @brief wdctl path to socket */
+    char *configfile;                   /**< @brief name of the config file */
+    char *htmlmsgfile;                  /**< @brief name of the HTML file used for messages */
+    char *wdctl_sock;                   /**< @brief wdctl path to socket */
     char *internal_sock;                /**< @brief internal path to socket */
     int deltatraffic;                   /**< @brief reset each user's traffic (Outgoing and Incoming) value after each Auth operation. */
-    int daemon;                 /**< @brief if daemon > 0, use daemon mode */
-    char *pidfile;            /**< @brief pid file path of wifidog */
-    char *external_interface;   /**< @brief External network interface name for
-				     firewall rules */
-    char *gw_id;                /**< @brief ID of the Gateway, sent to central
-				     server */
-    char *gw_interface;         /**< @brief Interface we will accept connections on */
-    char *gw_address;           /**< @brief Internal IP address for our web
-				     server */
-    int gw_port;                /**< @brief Port the webserver will run on */
-
-    t_auth_serv *auth_servers;  /**< @brief Auth servers list */
-    char *httpdname;            /**< @brief Name the web server will return when
-				     replying to a request */
-    int httpdmaxconn;           /**< @brief Used by libhttpd, not sure what it
-				     does */
-    char *httpdrealm;           /**< @brief HTTP Authentication realm */
-    char *httpdusername;        /**< @brief Username for HTTP authentication */
-    char *httpdpassword;        /**< @brief Password for HTTP authentication */
-    int clienttimeout;          /**< @brief How many CheckIntervals before a client
-				     must be re-authenticated */
-    int checkinterval;          /**< @brief Frequency the the client timeout check
-				     thread will run. */
-    int proxy_port;             /**< @brief Transparent proxy port (0 to disable) */
-    char *ssl_certs;            /**< @brief Path to SSL certs for auth server
-		verification */
-    int ssl_verify;             /**< @brief boolean, whether to enable
-		auth server certificate verification */
-    char *ssl_cipher_list;  /**< @brief List of SSL ciphers allowed. Optional. */
-    int ssl_use_sni;            /**< @brief boolean, whether to enable
-    auth server for server name indication, the TLS extension */
+    int daemon;                         /**< @brief if daemon > 0, use daemon mode */
+    char *pidfile;                      /**< @brief pid file path of wifidog */
+    char *external_interface;           /**< @brief External network interface name for firewall rules */
+    char *gw_id;                        /**< @brief ID of the Gateway, sent to central server */
+    char *gw_interface;                 /**< @brief Interface we will accept connections on */
+    char *gw_address;                   /**< @brief Internal IP address for our web server */
+    int gw_port;                        /**< @brief Port the webserver will run on */
+    t_auth_serv *auth_servers;          /**< @brief Auth servers list */
+    char *httpdname;                    /**< @brief Name the web server will return when replying to a request */
+    int httpdmaxconn;                   /**< @brief Used by libhttpd, not sure what it does */
+    char *httpdrealm;                   /**< @brief HTTP Authentication realm */
+    char *httpdusername;                /**< @brief Username for HTTP authentication */
+    char *httpdpassword;                /**< @brief Password for HTTP authentication */
+    int clienttimeout;                  /**< @brief How many CheckIntervals before a client must be re-authenticated */
+    int checkinterval;                  /**< @brief Frequency the the client timeout check thread will run. */
+    int proxy_port;                     /**< @brief Transparent proxy port (0 to disable) */
+    char *ssl_certs;                    /**< @brief Path to SSL certs for auth server verification */
+    int ssl_verify;                     /**< @brief boolean, whether to enable auth server certificate verification */
+    char *ssl_cipher_list;              /**< @brief List of SSL ciphers allowed. Optional. */
+    int ssl_use_sni;                    /**< @brief boolean, whether to enable auth server for server name indication, the TLS extension */
     t_firewall_ruleset *rulesets;       /**< @brief firewall rules */
-    t_trusted_mac *trustedmaclist; /**< @brief list of trusted macs */
-    char *arp_table_path; /**< @brief Path to custom ARP table, formatted
-        like /proc/net/arp */
-    t_popular_server *popular_servers; /**< @brief list of popular servers */
+    t_trusted_mac *trustedmaclist;      /**< @brief list of trusted macs */
+    t_trusted_ip *trustediplist;        /**< @brief list of trusted ips */
+    char *arp_table_path;               /**< @brief Path to custom ARP table, formatted like /proc/net/arp */
+    t_popular_server *popular_servers;  /**< @brief list of popular servers */
 } s_config;
 
 /** @brief Get the current gateway configuration */
@@ -232,4 +227,4 @@ t_firewall_rule *get_ruleset(const char *);
 	debug(LOG_DEBUG, "Config unlocked"); \
 } while (0)
 
-#endif                          /* _CONFIG_H_ */
+#endif /* _CONFIG_H_ */

@@ -57,6 +57,12 @@ CXXCPP	Makefile	/^CXXCPP = mipsel-openwrt-linux-g++ -E$/;"	m
 CXXDEPMODE	Makefile	/^CXXDEPMODE = depmode=gcc3$/;"	m
 CXXFLAGS	Makefile	/^CXXFLAGS = -g -O2$/;"	m
 CYGPATH_W	Makefile	/^CYGPATH_W = echo$/;"	m
+DECLTYPE	uthash.h	38;"	d
+DECLTYPE	uthash.h	41;"	d
+DECLTYPE	uthash.h	45;"	d
+DECLTYPE	uthash.h	47;"	d
+DECLTYPE_ASSIGN	uthash.h	51;"	d
+DECLTYPE_ASSIGN	uthash.h	57;"	d
 DEFAULT_ARPTABLE	conf.h	64;"	d
 DEFAULT_AUTHSERVAUTHPATHFRAGMENT	conf.h	59;"	d
 DEFAULT_AUTHSERVLOGINPATHFRAGMENT	conf.h	55;"	d
@@ -102,6 +108,7 @@ ECHO_C	Makefile	/^ECHO_C = $/;"	m
 ECHO_N	Makefile	/^ECHO_N = -n$/;"	m
 ECHO_T	Makefile	/^ECHO_T = $/;"	m
 EGREP	Makefile	/^EGREP = \/bin\/grep -E$/;"	m
+ELMT_FROM_HH	uthash.h	105;"	d
 ETAGS	Makefile	/^ETAGS = etags$/;"	m
 EXEEXT	Makefile	/^EXEEXT = $/;"	m
 EXT_INTERFACE_DETECT_RETRY_INTERVAL	util.h	35;"	d
@@ -115,15 +122,79 @@ FWRULESET_VALIDATING_USERS	conf.h	71;"	d
 FW_ACCESS_ALLOW	fw_iptables.h	/^    FW_ACCESS_ALLOW,$/;"	e	enum:fw_access_t_
 FW_ACCESS_DENY	fw_iptables.h	/^    FW_ACCESS_DENY$/;"	e	enum:fw_access_t_
 FW_MARK_AUTH_IS_DOWN	firewall.h	/^    FW_MARK_AUTH_IS_DOWN = 253, \/**< @brief The auth servers are down *\/$/;"	e	enum:_t_fw_marks
-FW_MARK_KNOWN	firewall.h	/^    FW_MARK_KNOWN = 2,  \/**< @brief The client is known to the firewall *\/$/;"	e	enum:_t_fw_marks
-FW_MARK_LOCKED	firewall.h	/^    FW_MARK_LOCKED = 254 \/**< @brief The client has been locked out *\/$/;"	e	enum:_t_fw_marks
-FW_MARK_NONE	firewall.h	/^    FW_MARK_NONE = 0, \/**< @brief No mark set. *\/$/;"	e	enum:_t_fw_marks
-FW_MARK_PROBATION	firewall.h	/^    FW_MARK_PROBATION = 1, \/**< @brief The client is in probation period and must be authenticated $/;"	e	enum:_t_fw_marks
+FW_MARK_KNOWN	firewall.h	/^    FW_MARK_KNOWN = 2,          \/**< @brief The client is known to the firewall *\/$/;"	e	enum:_t_fw_marks
+FW_MARK_LOCKED	firewall.h	/^    FW_MARK_LOCKED = 254        \/**< @brief The client has been locked out *\/$/;"	e	enum:_t_fw_marks
+FW_MARK_NONE	firewall.h	/^    FW_MARK_NONE = 0,           \/**< @brief No mark set. *\/$/;"	e	enum:_t_fw_marks
+FW_MARK_PROBATION	firewall.h	/^    FW_MARK_PROBATION = 1,      \/**< @brief The client is in probation period and must be authenticated$/;"	e	enum:_t_fw_marks
 GATEWAY_MESSAGE_ACCOUNT_LOGGED_OUT	centralserver.h	47;"	d
 GATEWAY_MESSAGE_ACCOUNT_VALIDATION_FAILED	centralserver.h	45;"	d
 GATEWAY_MESSAGE_ACTIVATE_ACCOUNT	centralserver.h	43;"	d
 GATEWAY_MESSAGE_DENIED	centralserver.h	41;"	d
 GREP	Makefile	/^GREP = \/bin\/grep$/;"	m
+HASH_ADD	uthash.h	173;"	d
+HASH_ADD_INT	uthash.h	272;"	d
+HASH_ADD_KEYPTR	uthash.h	186;"	d
+HASH_ADD_PTR	uthash.h	278;"	d
+HASH_ADD_STR	uthash.h	266;"	d
+HASH_ADD_TO_BKT	uthash.h	629;"	d
+HASH_BER	uthash.h	368;"	d
+HASH_BKT_CAPACITY_THRESH	uthash.h	102;"	d
+HASH_BLOOM_ADD	uthash.h	140;"	d
+HASH_BLOOM_ADD	uthash.h	149;"	d
+HASH_BLOOM_BITLEN	uthash.h	121;"	d
+HASH_BLOOM_BITSET	uthash.h	137;"	d
+HASH_BLOOM_BITTEST	uthash.h	138;"	d
+HASH_BLOOM_BYTELEN	uthash.h	122;"	d
+HASH_BLOOM_BYTELEN	uthash.h	151;"	d
+HASH_BLOOM_FREE	uthash.h	132;"	d
+HASH_BLOOM_FREE	uthash.h	148;"	d
+HASH_BLOOM_MAKE	uthash.h	123;"	d
+HASH_BLOOM_MAKE	uthash.h	147;"	d
+HASH_BLOOM_SIGNATURE	uthash.h	920;"	d
+HASH_BLOOM_TEST	uthash.h	143;"	d
+HASH_BLOOM_TEST	uthash.h	150;"	d
+HASH_CLEAR	uthash.h	867;"	d
+HASH_CNT	uthash.h	897;"	d
+HASH_COUNT	uthash.h	896;"	d
+HASH_DEL	uthash.h	282;"	d
+HASH_DELETE	uthash.h	228;"	d
+HASH_DEL_IN_BKT	uthash.h	643;"	d
+HASH_EMIT_KEY	uthash.h	350;"	d
+HASH_EMIT_KEY	uthash.h	357;"	d
+HASH_EXPAND_BUCKETS	uthash.h	683;"	d
+HASH_FCN	uthash.h	362;"	d
+HASH_FCN	uthash.h	364;"	d
+HASH_FIND	uthash.h	107;"	d
+HASH_FIND_INT	uthash.h	270;"	d
+HASH_FIND_IN_BKT	uthash.h	615;"	d
+HASH_FIND_PTR	uthash.h	276;"	d
+HASH_FIND_STR	uthash.h	264;"	d
+HASH_FNV	uthash.h	393;"	d
+HASH_FSCK	uthash.h	290;"	d
+HASH_FSCK	uthash.h	342;"	d
+HASH_INITIAL_NUM_BUCKETS	uthash.h	100;"	d
+HASH_INITIAL_NUM_BUCKETS_LOG2	uthash.h	101;"	d
+HASH_ITER	uthash.h	886;"	d
+HASH_ITER	uthash.h	890;"	d
+HASH_JEN	uthash.h	434;"	d
+HASH_JEN_MIX	uthash.h	421;"	d
+HASH_KEYCMP	uthash.h	612;"	d
+HASH_MAKE_TABLE	uthash.h	154;"	d
+HASH_MUR	uthash.h	572;"	d
+HASH_OAT	uthash.h	405;"	d
+HASH_OOPS	uthash.h	289;"	d
+HASH_OVERHEAD	uthash.h	878;"	d
+HASH_REPLACE	uthash.h	176;"	d
+HASH_REPLACE_INT	uthash.h	274;"	d
+HASH_REPLACE_PTR	uthash.h	280;"	d
+HASH_REPLACE_STR	uthash.h	268;"	d
+HASH_SAX	uthash.h	382;"	d
+HASH_SELECT	uthash.h	829;"	d
+HASH_SFH	uthash.h	486;"	d
+HASH_SIGNATURE	uthash.h	919;"	d
+HASH_SORT	uthash.h	735;"	d
+HASH_SRT	uthash.h	736;"	d
+HASH_TO_BKT	uthash.h	211;"	d
 HEADERS	Makefile	/^HEADERS = $(noinst_HEADERS)$/;"	m
 INSTALL	Makefile	/^INSTALL = \/usr\/bin\/install -c$/;"	m
 INSTALL_DATA	Makefile	/^INSTALL_DATA = ${INSTALL} -m 644$/;"	m
@@ -141,7 +212,7 @@ LINK	Makefile	/^LINK = $(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) \\$/;"	
 LIPO	Makefile	/^LIPO = $/;"	m
 LN_S	Makefile	/^LN_S = ln -s$/;"	m
 LOCK_CLIENT_LIST	client_list.h	113;"	d
-LOCK_CONFIG	conf.h	223;"	d
+LOCK_CONFIG	conf.h	218;"	d
 LOCK_CYASSL_CTX	simple_http.c	141;"	d	file:
 LOCK_GHBN	util.c	63;"	d	file:
 LTCOMPILE	Makefile	/^LTCOMPILE = $(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) \\$/;"	m
@@ -150,12 +221,29 @@ MAINT	Makefile	/^MAINT = $/;"	m
 MAKEINFO	Makefile	/^MAKEINFO = ${SHELL} \/home\/jacky\/mt7620\/package\/pronetway\/wifidog-gateway-1.3.0\/config\/missing makeinfo$/;"	m
 MANIFEST_TOOL	Makefile	/^MANIFEST_TOOL = :$/;"	m
 MAX_BUF	common.h	31;"	d
+MAX_CLIENTS	common.h	33;"	d
 MINIMUM_STARTED_TIME	ping_thread.h	31;"	d
 MKDIR_P	Makefile	/^MKDIR_P = \/bin\/mkdir -p$/;"	m
+MUR_FMIX	uthash.h	563;"	d
+MUR_GETBLOCK	uthash.h	541;"	d
+MUR_GETBLOCK	uthash.h	557;"	d
+MUR_ONE_THREE	uthash.h	551;"	d
+MUR_ONE_THREE	uthash.h	555;"	d
+MUR_PLUS0_ALIGNED	uthash.h	543;"	d
+MUR_PLUS1_ALIGNED	uthash.h	544;"	d
+MUR_PLUS2_ALIGNED	uthash.h	545;"	d
+MUR_PLUS3_ALIGNED	uthash.h	546;"	d
+MUR_ROTL32	uthash.h	562;"	d
+MUR_THREE_ONE	uthash.h	549;"	d
+MUR_THREE_ONE	uthash.h	553;"	d
+MUR_TWO_TWO	uthash.h	550;"	d
+MUR_TWO_TWO	uthash.h	554;"	d
 NM	Makefile	/^NM = \/home\/jacky\/mt7620\/staging_dir\/toolchain-mipsel_24kec+dsp_gcc-4.8-linaro_uClibc-0.9.33.2\/bin\/mipsel-openwrt-linux-nm -B$/;"	m
 NMEDIT	Makefile	/^NMEDIT = $/;"	m
 NORMAL_INSTALL	Makefile	/^NORMAL_INSTALL = :$/;"	m
 NORMAL_UNINSTALL	Makefile	/^NORMAL_UNINSTALL = :$/;"	m
+NO_DECLTYPE	uthash.h	40;"	d
+NO_DECLTYPE	uthash.h	44;"	d
 NUM_EXT_INTERFACE_DETECT_RETRY	util.h	32;"	d
 OBJDUMP	Makefile	/^OBJDUMP = mipsel-openwrt-linux-objdump$/;"	m
 OBJEXT	Makefile	/^OBJEXT = o$/;"	m
@@ -189,11 +277,14 @@ TARGET_DROP	conf.h	/^    TARGET_DROP,$/;"	e	enum:__anon4
 TARGET_LOG	conf.h	/^    TARGET_LOG,$/;"	e	enum:__anon4
 TARGET_REJECT	conf.h	/^    TARGET_REJECT,$/;"	e	enum:__anon4
 TARGET_ULOG	conf.h	/^    TARGET_ULOG$/;"	e	enum:__anon4
-TO_NEXT_WORD	conf.c	416;"	d	file:
+TO_NEXT_WORD	conf.c	420;"	d	file:
 UNLOCK_CLIENT_LIST	client_list.h	119;"	d
-UNLOCK_CONFIG	conf.h	229;"	d
+UNLOCK_CONFIG	conf.h	224;"	d
 UNLOCK_CYASSL_CTX	simple_http.c	147;"	d	file:
 UNLOCK_GHBN	util.c	69;"	d	file:
+UTHASH_VERSION	uthash.h	80;"	d
+UT_hash_bucket	uthash.h	/^typedef struct UT_hash_bucket {$/;"	s
+UT_hash_bucket	uthash.h	/^} UT_hash_bucket;$/;"	t	typeref:struct:UT_hash_bucket
 VERSION	Makefile	/^VERSION = 1.3.0$/;"	m
 WDCTL_KILL	wdctl.h	35;"	d
 WDCTL_RESTART	wdctl.h	36;"	d
@@ -206,8 +297,10 @@ WIFIDOG_MAJOR_VERSION	Makefile	/^WIFIDOG_MAJOR_VERSION = 1$/;"	m
 WIFIDOG_MICRO_VERSION	Makefile	/^WIFIDOG_MICRO_VERSION = 0$/;"	m
 WIFIDOG_MINOR_VERSION	Makefile	/^WIFIDOG_MINOR_VERSION = 3$/;"	m
 WIFIDOG_VERSION	Makefile	/^WIFIDOG_VERSION = 1.3.0$/;"	m
+WP	uthash.h	547;"	d
 _AUTH_H_	auth.h	29;"	d
 _CENTRALSERVER_H_	centralserver.h	29;"	d
+_CLIENT_HASH_H_	client_hash.h	2;"	d
 _CLIENT_LIST_H_	client_list.h	29;"	d
 _COMMANDLINE_H_	commandline.h	29;"	d
 _COMMON_H_	common.h	28;"	d
@@ -235,6 +328,7 @@ _PING_THREAD_H_	ping_thread.h	29;"	d
 _PSTRING_H_	pstring.h	28;"	d
 _SAFE_H_	safe.h	29;"	d
 _SIMPLE_HTTP_H_	simple_http.h	23;"	d
+_UTHASH_H_	uthash.h	25;"	d
 _UTIL_H_	util.h	28;"	d
 _WDCTL_H_	wdctl.h	28;"	d
 _WDCTL_THREAD_H_	wdctl_thread.h	28;"	d
@@ -251,9 +345,12 @@ _parse_firewall_rule	conf.c	/^_parse_firewall_rule(const char *ruleset, char *le
 _popular_server_t	conf.h	/^typedef struct _popular_server_t {$/;"	s
 _pstr_grow	pstring.c	/^_pstr_grow(pstr_t *pstr)$/;"	f	file:
 _t_authresponse	auth.h	/^typedef struct _t_authresponse {$/;"	s
+_t_client	client_hash.h	/^typedef struct _t_client {$/;"	s
 _t_client	client_list.h	/^typedef struct _t_client {$/;"	s
+_t_counters	client_hash.h	/^typedef struct _t_counters {$/;"	s
 _t_counters	client_list.h	/^typedef struct _t_counters {$/;"	s
 _t_fw_marks	firewall.h	/^typedef enum _t_fw_marks {$/;"	g
+_trusted_ip_t	conf.h	/^typedef struct _trusted_ip_t {$/;"	s
 _trusted_mac_t	conf.h	/^typedef struct _trusted_mac_t {$/;"	s
 abs_builddir	Makefile	/^abs_builddir = \/home\/jacky\/mt7620\/package\/pronetway\/wifidog-gateway-1.3.0\/src$/;"	m
 abs_srcdir	Makefile	/^abs_srcdir = \/home\/jacky\/mt7620\/package\/pronetway\/wifidog-gateway-1.3.0\/src$/;"	m
@@ -309,23 +406,29 @@ am_wdctl_OBJECTS	Makefile	/^am_wdctl_OBJECTS = wdctl.$(OBJEXT)$/;"	m
 am_wifidog_OBJECTS	Makefile	/^am_wifidog_OBJECTS = main.$(OBJEXT)$/;"	m
 append_x_restartargv	gateway.c	/^append_x_restartargv(void)$/;"	f
 arp_get	firewall.c	/^arp_get(const char *req_ip)$/;"	f
-arp_table_path	conf.h	/^    char *arp_table_path; \/**< @brief Path to custom ARP table, formatted$/;"	m	struct:__anon5
+arp_table_path	conf.h	/^    char *arp_table_path;               \/**< @brief Path to custom ARP table, formatted like \/proc\/net\/arp *\/$/;"	m	struct:__anon5
+auth_server_build_request	centralserver.c	/^auth_server_build_request(char *request, int size, int client_num, struct client *client)$/;"	f
+auth_server_nrequest	centralserver.c	/^auth_server_nrequest(t_authresponse * authresponse, const char *request_type, int client_num, struct client *client)$/;"	f
 auth_server_request	centralserver.c	/^auth_server_request(t_authresponse * authresponse, const char *request_type, const char *ip, const char *mac,$/;"	f
-auth_servers	conf.h	/^    t_auth_serv *auth_servers;  \/**< @brief Auth servers list *\/$/;"	m	struct:__anon5
+auth_servers	conf.h	/^    t_auth_serv *auth_servers;          \/**< @brief Auth servers list *\/$/;"	m	struct:__anon5
 authcode	auth.h	/^    t_authcode authcode; \/**< Authentication code returned by the server *\/$/;"	m	struct:_t_authresponse
 authenticate_client	auth.c	/^authenticate_client(request * r)$/;"	f
 authserv_auth_script_path_fragment	conf.h	/^    char *authserv_auth_script_path_fragment;   \/**< @brief This is the script that talks the wifidog gateway protocol. *\/$/;"	m	struct:_auth_serv_t
-authserv_hostname	conf.h	/^    char *authserv_hostname;    \/**< @brief Hostname of the central server *\/$/;"	m	struct:_auth_serv_t
-authserv_http_port	conf.h	/^    int authserv_http_port;     \/**< @brief Http port the central server$/;"	m	struct:_auth_serv_t
+authserv_hostname	conf.h	/^    char *authserv_hostname;                    \/**< @brief Hostname of the central server *\/$/;"	m	struct:_auth_serv_t
+authserv_http_port	conf.h	/^    int authserv_http_port;                     \/**< @brief Http port the central server listens on *\/$/;"	m	struct:_auth_serv_t
 authserv_login_script_path_fragment	conf.h	/^    char *authserv_login_script_path_fragment;  \/**< @brief This is the script the user will be sent to for login. *\/$/;"	m	struct:_auth_serv_t
 authserv_msg_script_path_fragment	conf.h	/^    char *authserv_msg_script_path_fragment;    \/**< @brief This is the script the user will be sent to upon error to read a readable message. *\/$/;"	m	struct:_auth_serv_t
-authserv_path	conf.h	/^    char *authserv_path;        \/**< @brief Path where wifidog resides *\/$/;"	m	struct:_auth_serv_t
+authserv_path	conf.h	/^    char *authserv_path;                        \/**< @brief Path where wifidog resides *\/$/;"	m	struct:_auth_serv_t
 authserv_ping_script_path_fragment	conf.h	/^    char *authserv_ping_script_path_fragment;   \/**< @brief This is the ping heartbeating script. *\/$/;"	m	struct:_auth_serv_t
 authserv_portal_script_path_fragment	conf.h	/^    char *authserv_portal_script_path_fragment; \/**< @brief This is the script the user will be sent to after a successfull login. *\/$/;"	m	struct:_auth_serv_t
-authserv_ssl_port	conf.h	/^    int authserv_ssl_port;      \/**< @brief Https port the central server$/;"	m	struct:_auth_serv_t
-authserv_use_ssl	conf.h	/^    int authserv_use_ssl;       \/**< @brief Use SSL or not *\/$/;"	m	struct:_auth_serv_t
+authserv_ssl_port	conf.h	/^    int authserv_ssl_port;                      \/**< @brief Https port the central server listens on *\/$/;"	m	struct:_auth_serv_t
+authserv_use_ssl	conf.h	/^    int authserv_use_ssl;                       \/**< @brief Use SSL or not *\/$/;"	m	struct:_auth_serv_t
 bin_PROGRAMS	Makefile	/^bin_PROGRAMS = wifidog$(EXEEXT) wdctl$(EXEEXT)$/;"	m
 bindir	Makefile	/^bindir = ${exec_prefix}\/bin$/;"	m
+bloom_bv	uthash.h	/^	uint8_t *bloom_bv;$/;"	m	struct:ut_hash_table
+bloom_nbits	uthash.h	/^	uint8_t bloom_nbits;$/;"	m	struct:ut_hash_table
+bloom_sig	uthash.h	/^	uint32_t bloom_sig;		\/* used only to test bloom exists in external analysis *\/$/;"	m	struct:ut_hash_table
+buckets	uthash.h	/^	UT_hash_bucket *buckets;$/;"	m	struct:ut_hash_table
 buf	pstring.h	/^    char *buf;   \/**< @brief Buffer used to hold string. Pointer subject to change. *\/$/;"	m	struct:pstr
 build	Makefile	/^build = i686-pc-linux-gnu$/;"	m
 build_alias	Makefile	/^build_alias = $/;"	m
@@ -334,9 +437,14 @@ build_os	Makefile	/^build_os = linux-gnu$/;"	m
 build_triplet	Makefile	/^build_triplet = i686-pc-linux-gnu$/;"	m
 build_vendor	Makefile	/^build_vendor = pc$/;"	m
 builddir	Makefile	/^builddir = .$/;"	m
+check_config_version	ping_thread.c	/^check_config_version(const char *res, const t_auth_serv *auth_server)$/;"	f
+check_ip_format	conf.c	/^check_ip_format(char *possibleip)$/;"	f
+check_logout	ping_thread.c	/^check_logout(const char *res)$/;"	f
 check_mac_format	conf.c	/^check_mac_format(char *possiblemac)$/;"	f
-checkinterval	conf.h	/^    int checkinterval;          \/**< @brief Frequency the the client timeout check$/;"	m	struct:__anon5
+checkinterval	conf.h	/^    int checkinterval;                  \/**< @brief Frequency the the client timeout check thread will run. *\/$/;"	m	struct:__anon5
 cleanup_fds	safe.c	/^cleanup_fds(void)$/;"	f	file:
+client	common.h	/^struct client {$/;"	s
+client_copy	firewall.c	/^client_copy(struct client *dst, const t_client *src)$/;"	f	file:
 client_dup	client_list.c	/^client_dup(const t_client * src)$/;"	f
 client_free_node	client_list.c	/^client_free_node(t_client * client)$/;"	f
 client_get_first_client	client_list.c	/^client_get_first_client(void)$/;"	f
@@ -356,7 +464,7 @@ client_list_init	client_list.c	/^client_list_init(void)$/;"	f
 client_list_insert_client	client_list.c	/^client_list_insert_client(t_client * client)$/;"	f
 client_list_mutex	client_list.c	/^pthread_mutex_t client_list_mutex = PTHREAD_MUTEX_INITIALIZER;$/;"	v
 client_list_remove	client_list.c	/^client_list_remove(t_client * client)$/;"	f
-clienttimeout	conf.h	/^    int clienttimeout;          \/**< @brief How many CheckIntervals before a client$/;"	m	struct:__anon5
+clienttimeout	conf.h	/^    int clienttimeout;                  \/**< @brief How many CheckIntervals before a client must be re-authenticated *\/$/;"	m	struct:__anon5
 close_icmp_socket	util.c	/^close_icmp_socket(void)$/;"	f
 command	wdctl.h	/^    int command;$/;"	m	struct:__anon6
 config	conf.c	/^static s_config config;$/;"	v	file:
@@ -369,14 +477,16 @@ config_notnull	conf.c	/^config_notnull(const void *parm, const char *parmname)$/
 config_parse_token	conf.c	/^config_parse_token(const char *cp, const char *filename, int linenum)$/;"	f	file:
 config_read	conf.c	/^config_read(const char *filename)$/;"	f
 config_validate	conf.c	/^config_validate(void)$/;"	f
-configfile	conf.h	/^    char *configfile;       \/**< @brief name of the config file *\/$/;"	m	struct:__anon5
+configfile	conf.h	/^    char *configfile;                   \/**< @brief name of the config file *\/$/;"	m	struct:__anon5
 connect_auth_server	centralserver.c	/^connect_auth_server()$/;"	f
 connect_to_server	wdctl.c	/^connect_to_server(const char *sock_name)$/;"	f	file:
+count	uthash.h	/^	unsigned count;$/;"	m	struct:UT_hash_bucket
+counters	client_hash.h	/^	t_counters counters;					\/**< @brief Counters for input\/output of the client. *\/$/;"	m	struct:_t_client
 counters	client_list.h	/^    t_counters counters;                \/**< @brief Counters for input\/output of$/;"	m	struct:_t_client
 create_unix_socket	wdctl_thread.c	/^create_unix_socket(const char *sock_name)$/;"	f	file:
 cyassl_ctx	simple_http.c	/^static CYASSL_CTX *cyassl_ctx = NULL;$/;"	v	file:
 cyassl_ctx_mutex	simple_http.c	/^static pthread_mutex_t cyassl_ctx_mutex = PTHREAD_MUTEX_INITIALIZER;$/;"	v	file:
-daemon	conf.h	/^    int daemon;                 \/**< @brief if daemon > 0, use daemon mode *\/$/;"	m	struct:__anon5
+daemon	conf.h	/^    int daemon;                         \/**< @brief if daemon > 0, use daemon mode *\/$/;"	m	struct:__anon5
 datadir	Makefile	/^datadir = ${datarootdir}$/;"	m
 datarootdir	Makefile	/^datarootdir = ${prefix}\/share$/;"	m
 debug	debug.h	44;"	d
@@ -392,11 +502,14 @@ enable_html_docs	Makefile	/^enable_html_docs = yes$/;"	m
 enable_latex_docs	Makefile	/^enable_latex_docs = no$/;"	m
 exec_prefix	Makefile	/^exec_prefix = ${prefix}$/;"	m
 execute	util.c	/^execute(const char *cmd_line, int quiet)$/;"	f
-external_interface	conf.h	/^    char *external_interface;   \/**< @brief External network interface name for$/;"	m	struct:__anon5
+expand_mult	uthash.h	/^	unsigned expand_mult;$/;"	m	struct:UT_hash_bucket
+external_interface	conf.h	/^    char *external_interface;           \/**< @brief External network interface name for firewall rules *\/$/;"	m	struct:__anon5
+fd	client_hash.h	/^	int fd;									\/**< @brief Client HTTP socket (valid only during login before one of the _http_* function is called *\/$/;"	m	struct:_t_client
 fd	client_list.h	/^    int fd;                             \/**< @brief Client HTTP socket (valid only$/;"	m	struct:_t_client
 fd	safe.c	/^    int fd;                 \/**< @brief file descriptor *\/$/;"	m	struct:_fd_list	file:
 fd_list	safe.c	/^static fd_list_t *fd_list = NULL;$/;"	v	file:
 fd_list_t	safe.c	/^} fd_list_t;$/;"	t	typeref:struct:_fd_list	file:
+find_char	ping_thread.c	/^find_char(const char *str, char ch)$/;"	f	file:
 firstclient	client_list.c	/^static t_client *firstclient = NULL;$/;"	v	file:
 func_exec_program	wifidog	/^func_exec_program ()$/;"	f
 func_exec_program_core	wifidog	/^func_exec_program_core ()$/;"	f
@@ -408,6 +521,7 @@ fw_access_t_	fw_iptables.h	/^typedef enum fw_access_t_ {$/;"	g
 fw_allow	firewall.c	/^fw_allow(t_client * client, int new_fw_connection_state)$/;"	f
 fw_allow_host	firewall.c	/^fw_allow_host(const char *host)$/;"	f
 fw_clear_authservers	firewall.c	/^fw_clear_authservers(void)$/;"	f
+fw_connection_state	client_hash.h	/^	int fw_connection_state;				\/**< @brief Connection state in the firewall *\/$/;"	m	struct:_t_client
 fw_connection_state	client_list.h	/^    int fw_connection_state;     \/**< @brief Connection state in the$/;"	m	struct:_t_client
 fw_deny	firewall.c	/^fw_deny(t_client * client)$/;"	f
 fw_destroy	firewall.c	/^fw_destroy(void)$/;"	f
@@ -417,6 +531,9 @@ fw_set_authdown	firewall.c	/^fw_set_authdown(void)$/;"	f
 fw_set_authservers	firewall.c	/^fw_set_authservers(void)$/;"	f
 fw_set_authup	firewall.c	/^fw_set_authup(void)$/;"	f
 fw_sync_with_authserver	firewall.c	/^fw_sync_with_authserver(void)$/;"	f
+get16bits	uthash.h	476;"	d
+get16bits	uthash.h	479;"	d
+get16bits	uthash.h	483;"	d
 get_auth_server	conf.c	/^get_auth_server(void)$/;"	f
 get_clients_from_parent	gateway.c	/^get_clients_from_parent(void)$/;"	f
 get_cyassl_ctx	simple_http.c	/^get_cyassl_ctx(const char *hostname)$/;"	f	file:
@@ -426,11 +543,18 @@ get_iface_mac	util.c	/^get_iface_mac(const char *ifname)$/;"	f
 get_ruleset	conf.c	/^get_ruleset(const char *ruleset)$/;"	f
 get_status_text	wd_util.c	/^get_status_text()$/;"	f
 ghbn_mutex	util.c	/^static pthread_mutex_t ghbn_mutex = PTHREAD_MUTEX_INITIALIZER;$/;"	v	file:
-gw_address	conf.h	/^    char *gw_address;           \/**< @brief Internal IP address for our web$/;"	m	struct:__anon5
-gw_id	conf.h	/^    char *gw_id;                \/**< @brief ID of the Gateway, sent to central$/;"	m	struct:__anon5
-gw_interface	conf.h	/^    char *gw_interface;         \/**< @brief Interface we will accept connections on *\/$/;"	m	struct:__anon5
+got_pong_value	ping_thread.c	/^got_pong_value(const char *str, const char *key, char *value, int size)$/;"	f
+gw_address	conf.h	/^    char *gw_address;                   \/**< @brief Internal IP address for our web server *\/$/;"	m	struct:__anon5
+gw_id	conf.h	/^    char *gw_id;                        \/**< @brief ID of the Gateway, sent to central server *\/$/;"	m	struct:__anon5
+gw_interface	conf.h	/^    char *gw_interface;                 \/**< @brief Interface we will accept connections on *\/$/;"	m	struct:__anon5
 gw_main	gateway.c	/^gw_main(int argc, char **argv)$/;"	f
-gw_port	conf.h	/^    int gw_port;                \/**< @brief Port the webserver will run on *\/$/;"	m	struct:__anon5
+gw_port	conf.h	/^    int gw_port;                        \/**< @brief Port the webserver will run on *\/$/;"	m	struct:__anon5
+hashv	uthash.h	/^	unsigned hashv;					\/* result of hash-fcn(key)        *\/$/;"	m	struct:ut_hash_handle
+hh	client_hash.h	/^	ut_hash_handle hh;						\/**< @brief Make this struct hashable *\/$/;"	m	struct:_t_client
+hh_head	uthash.h	/^	struct ut_hash_handle *hh_head;$/;"	m	struct:UT_hash_bucket	typeref:struct:UT_hash_bucket::ut_hash_handle
+hh_next	uthash.h	/^	struct ut_hash_handle *hh_next;	\/* next hh in bucket order        *\/$/;"	m	struct:ut_hash_handle	typeref:struct:ut_hash_handle::ut_hash_handle
+hh_prev	uthash.h	/^	struct ut_hash_handle *hh_prev;	\/* previous hh in bucket order    *\/$/;"	m	struct:ut_hash_handle	typeref:struct:ut_hash_handle::ut_hash_handle
+hho	uthash.h	/^	ptrdiff_t hho;					\/* hash handle offset (byte pos of hash handle in element *\/$/;"	m	struct:ut_hash_table
 host	Makefile	/^host = mipsel-openwrt-linux-gnu$/;"	m
 host_alias	Makefile	/^host_alias = mipsel-openwrt-linux$/;"	m
 host_cpu	Makefile	/^host_cpu = mipsel$/;"	m
@@ -439,7 +563,7 @@ host_triplet	Makefile	/^host_triplet = mipsel-openwrt-linux-gnu$/;"	m
 host_vendor	Makefile	/^host_vendor = openwrt$/;"	m
 hostname	conf.h	/^    char *hostname;$/;"	m	struct:_popular_server_t
 htmldir	Makefile	/^htmldir = ${docdir}$/;"	m
-htmlmsgfile	conf.h	/^    char *htmlmsgfile;          \/**< @brief name of the HTML file used for messages *\/$/;"	m	struct:__anon5
+htmlmsgfile	conf.h	/^    char *htmlmsgfile;                  \/**< @brief name of the HTML file used for messages *\/$/;"	m	struct:__anon5
 http_callback_404	http.c	/^http_callback_404(httpd * webserver, request * r, int error_code)$/;"	f
 http_callback_about	http.c	/^http_callback_about(httpd * webserver, request * r)$/;"	f
 http_callback_auth	http.c	/^http_callback_auth(httpd * webserver, request * r)$/;"	f
@@ -449,19 +573,25 @@ http_callback_wifidog	http.c	/^http_callback_wifidog(httpd * webserver, request 
 http_get	simple_http.c	/^http_get(const int sockfd, const char *req)$/;"	f
 http_send_redirect	http.c	/^http_send_redirect(request * r, const char *url, const char *text)$/;"	f
 http_send_redirect_to_auth	http.c	/^http_send_redirect_to_auth(request * r, const char *urlFragment, const char *text)$/;"	f
-httpdmaxconn	conf.h	/^    int httpdmaxconn;           \/**< @brief Used by libhttpd, not sure what it$/;"	m	struct:__anon5
-httpdname	conf.h	/^    char *httpdname;            \/**< @brief Name the web server will return when$/;"	m	struct:__anon5
-httpdpassword	conf.h	/^    char *httpdpassword;        \/**< @brief Password for HTTP authentication *\/$/;"	m	struct:__anon5
-httpdrealm	conf.h	/^    char *httpdrealm;           \/**< @brief HTTP Authentication realm *\/$/;"	m	struct:__anon5
-httpdusername	conf.h	/^    char *httpdusername;        \/**< @brief Username for HTTP authentication *\/$/;"	m	struct:__anon5
+httpdmaxconn	conf.h	/^    int httpdmaxconn;                   \/**< @brief Used by libhttpd, not sure what it does *\/$/;"	m	struct:__anon5
+httpdname	conf.h	/^    char *httpdname;                    \/**< @brief Name the web server will return when replying to a request *\/$/;"	m	struct:__anon5
+httpdpassword	conf.h	/^    char *httpdpassword;                \/**< @brief Password for HTTP authentication *\/$/;"	m	struct:__anon5
+httpdrealm	conf.h	/^    char *httpdrealm;                   \/**< @brief HTTP Authentication realm *\/$/;"	m	struct:__anon5
+httpdusername	conf.h	/^    char *httpdusername;                \/**< @brief Username for HTTP authentication *\/$/;"	m	struct:__anon5
 https_get	simple_http.c	/^https_get(const int sockfd, const char *req, const char *hostname)$/;"	f
 icmp_fd	util.c	/^static int icmp_fd;$/;"	v	file:
 icmp_ping	util.c	/^icmp_ping(const char *host)$/;"	f
 id	client_list.h	/^    unsigned long long id;           \/**< @brief Unique ID per client *\/$/;"	m	struct:_t_client
+ideal_chain_maxlen	uthash.h	/^	unsigned ideal_chain_maxlen;$/;"	m	struct:ut_hash_table
 includedir	Makefile	/^includedir = ${prefix}\/include$/;"	m
+incoming	client_hash.h	/^	unsigned long long incoming;			\/**< @brief Incoming data total*\/$/;"	m	struct:_t_counters
 incoming	client_list.h	/^    unsigned long long incoming;        \/**< @brief Incoming data total*\/$/;"	m	struct:_t_counters
+incoming	common.h	/^	int incoming;$/;"	m	struct:client
+incoming_delta	client_hash.h	/^	unsigned long long incoming_delta;		\/**< @brief Incoming data after last report*\/$/;"	m	struct:_t_counters
 incoming_delta	client_list.h	/^    unsigned long long incoming_delta;                    \/**< @brief Incoming data after last report*\/$/;"	m	struct:_t_counters
+incoming_history	client_hash.h	/^	unsigned long long incoming_history;	\/**< @brief Incoming data before wifidog restarted*\/$/;"	m	struct:_t_counters
 incoming_history	client_list.h	/^    unsigned long long incoming_history;        \/**< @brief Incoming data before wifidog restarted*\/$/;"	m	struct:_t_counters
+ineff_expands	uthash.h	/^	unsigned ineff_expands, noexpand;$/;"	m	struct:ut_hash_table
 infodir	Makefile	/^infodir = ${datarootdir}\/info$/;"	m
 init_config	wdctl.c	/^init_config(void)$/;"	f	file:
 init_icmp_socket	util.c	/^init_icmp_socket(void)$/;"	f
@@ -471,7 +601,10 @@ install_sh_DATA	Makefile	/^install_sh_DATA = $(install_sh) -c -m 644$/;"	m
 install_sh_PROGRAM	Makefile	/^install_sh_PROGRAM = $(install_sh) -c$/;"	m
 install_sh_SCRIPT	Makefile	/^install_sh_SCRIPT = $(install_sh) -c$/;"	m
 internal_sock	conf.h	/^    char *internal_sock;                \/**< @brief internal path to socket *\/$/;"	m	struct:__anon5
+ip	client_hash.h	/^	char *ip;								\/**< @brief Client Ip address *\/$/;"	m	struct:_t_client
 ip	client_list.h	/^    char *ip;                           \/**< @brief Client Ip address *\/$/;"	m	struct:_t_client
+ip	common.h	/^    char ip[16];$/;"	m	struct:client
+ip	conf.h	/^    char *ip;$/;"	m	struct:_trusted_ip_t
 iptables_compile	fw_iptables.c	/^iptables_compile(const char *table, const char *chain, const t_firewall_rule * rule)$/;"	f	file:
 iptables_do_command	fw_iptables.c	/^iptables_do_command(const char *format, ...)$/;"	f	file:
 iptables_fw_access	fw_iptables.c	/^iptables_fw_access(fw_access_t type, const char *ip, const char *mac, int tag)$/;"	f
@@ -488,12 +621,15 @@ iptables_insert_gateway_id	fw_iptables.c	/^iptables_insert_gateway_id(char **inp
 iptables_load_ruleset	fw_iptables.c	/^iptables_load_ruleset(const char *table, const char *ruleset, const char *chain)$/;"	f	file:
 is_auth_online	wd_util.c	/^is_auth_online()$/;"	f
 is_online	wd_util.c	/^is_online()$/;"	f
+key	uthash.h	/^	void *key;						\/* ptr to enclosing struct's key  *\/$/;"	m	struct:ut_hash_handle
+keylen	uthash.h	/^	unsigned keylen;				\/* enclosing struct's key len     *\/$/;"	m	struct:ut_hash_handle
 keywords	conf.c	/^} keywords[] = {$/;"	v	typeref:struct:__anon3	file:
 last_auth_offline_time	wd_util.c	/^static time_t last_auth_offline_time = 0;$/;"	v	file:
 last_auth_online_time	wd_util.c	/^static time_t last_auth_online_time = 0;$/;"	v	file:
-last_ip	conf.h	/^    char *last_ip;      \/**< @brief Last ip used by authserver *\/$/;"	m	struct:_auth_serv_t
+last_ip	conf.h	/^    char *last_ip;                              \/**< @brief Last ip used by authserver *\/$/;"	m	struct:_auth_serv_t
 last_offline_time	wd_util.c	/^static time_t last_offline_time = 0;$/;"	v	file:
 last_online_time	wd_util.c	/^static time_t last_online_time = 0;$/;"	v	file:
+last_updated	client_hash.h	/^	time_t last_updated;					\/**< @brief Last update of the counters *\/$/;"	m	struct:_t_counters
 last_updated	client_list.h	/^    time_t last_updated;        \/**< @brief Last update of the counters *\/$/;"	m	struct:_t_counters
 len	pstring.h	/^    size_t len;  \/**< @brief Current length of the string. *\/$/;"	m	struct:pstr
 libdir	Makefile	/^libdir = ${exec_prefix}\/lib$/;"	m
@@ -504,10 +640,14 @@ libgateway_a_OBJECTS	Makefile	/^libgateway_a_OBJECTS = $(am_libgateway_a_OBJECTS
 libgateway_a_SOURCES	Makefile	/^libgateway_a_SOURCES = commandline.c \\$/;"	m
 localedir	Makefile	/^localedir = ${datarootdir}\/locale$/;"	m
 localstatedir	Makefile	/^localstatedir = ${prefix}\/var$/;"	m
+log2_num_buckets	uthash.h	/^	unsigned num_buckets, log2_num_buckets;$/;"	m	struct:ut_hash_table
 log_stderr	debug.h	/^    int log_stderr;      \/**< @brief Output log to stdout *\/$/;"	m	struct:_debug_conf
 log_syslog	debug.h	/^    int log_syslog;      \/**< @brief Output log to syslog *\/$/;"	m	struct:_debug_conf
 logout_client	auth.c	/^logout_client(t_client * client)$/;"	f
+logout_nclient	auth.c	/^logout_nclient(int client_num, struct client *client)$/;"	f
+mac	client_hash.h	/^	char *mac;								\/**< @brief Client Mac address *\/$/;"	m	struct:_t_client
 mac	client_list.h	/^    char *mac;                          \/**< @brief Client Mac address *\/$/;"	m	struct:_t_client
+mac	common.h	/^    char mac[20];$/;"	m	struct:client
 mac	conf.h	/^    char *mac;$/;"	m	struct:_trusted_mac_t
 main	main.c	/^main(int argc, char **argv)$/;"	f
 main	wdctl.c	/^main(int argc, char **argv)$/;"	f
@@ -519,7 +659,7 @@ mark_auth_server_bad	conf.c	/^mark_auth_server_bad(t_auth_serv * bad_server)$/;"
 mark_offline	wd_util.c	/^mark_offline()$/;"	f
 mark_online	wd_util.c	/^mark_online()$/;"	f
 mask	conf.h	/^    char *mask;                 \/**< @brief Mask for the rule *destination* *\/$/;"	m	struct:_firewall_rule_t
-mask_is_ipset	conf.h	/^    int mask_is_ipset; \/**< @brief *destination* is ipset  *\/$/;"	m	struct:_firewall_rule_t
+mask_is_ipset	conf.h	/^    int mask_is_ipset;          \/**< @brief *destination* is ipset  *\/$/;"	m	struct:_firewall_rule_t
 missing_parms	conf.c	/^static int missing_parms;$/;"	v	file:
 mkdir_p	Makefile	/^mkdir_p = $(MKDIR_P)$/;"	m
 mkinstalldirs	Makefile	/^mkinstalldirs = $(install_sh) -d$/;"	m
@@ -530,10 +670,16 @@ next	conf.h	/^    struct _auth_serv_t *next;$/;"	m	struct:_auth_serv_t	typeref:s
 next	conf.h	/^    struct _firewall_rule_t *next;$/;"	m	struct:_firewall_rule_t	typeref:struct:_firewall_rule_t::_firewall_rule_t
 next	conf.h	/^    struct _firewall_ruleset_t *next;$/;"	m	struct:_firewall_ruleset_t	typeref:struct:_firewall_ruleset_t::_firewall_ruleset_t
 next	conf.h	/^    struct _popular_server_t *next;$/;"	m	struct:_popular_server_t	typeref:struct:_popular_server_t::_popular_server_t
+next	conf.h	/^    struct _trusted_ip_t *next;$/;"	m	struct:_trusted_ip_t	typeref:struct:_trusted_ip_t::_trusted_ip_t
 next	conf.h	/^    struct _trusted_mac_t *next;$/;"	m	struct:_trusted_mac_t	typeref:struct:_trusted_mac_t::_trusted_mac_t
 next	safe.c	/^    struct _fd_list *next;  \/**< @brief linked list pointer *\/$/;"	m	struct:_fd_list	typeref:struct:_fd_list::_fd_list	file:
+next	uthash.h	/^	void *next;						\/* next element in app order      *\/$/;"	m	struct:ut_hash_handle
+noexpand	uthash.h	/^	unsigned ineff_expands, noexpand;$/;"	m	struct:ut_hash_table
 noinst_HEADERS	Makefile	/^noinst_HEADERS = commandline.h \\$/;"	m
 noinst_LIBRARIES	Makefile	/^noinst_LIBRARIES = libgateway.a$/;"	m
+nonideal_items	uthash.h	/^	unsigned nonideal_items;$/;"	m	struct:ut_hash_table
+num_buckets	uthash.h	/^	unsigned num_buckets, log2_num_buckets;$/;"	m	struct:ut_hash_table
+num_items	uthash.h	/^	unsigned num_items;$/;"	m	struct:ut_hash_table
 oAuthServAuthScriptPathFragment	conf.c	/^    oAuthServAuthScriptPathFragment,$/;"	e	enum:__anon2	file:
 oAuthServHTTPPort	conf.c	/^    oAuthServHTTPPort,$/;"	e	enum:__anon2	file:
 oAuthServHostname	conf.c	/^    oAuthServHostname,$/;"	e	enum:__anon2	file:
@@ -571,12 +717,17 @@ oSSLCertPath	conf.c	/^    oSSLCertPath,$/;"	e	enum:__anon2	file:
 oSSLPeerVerification	conf.c	/^    oSSLPeerVerification,$/;"	e	enum:__anon2	file:
 oSSLUseSNI	conf.c	/^    oSSLUseSNI,$/;"	e	enum:__anon2	file:
 oSyslogFacility	conf.c	/^    oSyslogFacility,$/;"	e	enum:__anon2	file:
+oTrustedIPList	conf.c	/^    oTrustedIPList,$/;"	e	enum:__anon2	file:
 oTrustedMACList	conf.c	/^    oTrustedMACList,$/;"	e	enum:__anon2	file:
 oWdctlSocket	conf.c	/^    oWdctlSocket,$/;"	e	enum:__anon2	file:
 oldincludedir	Makefile	/^oldincludedir = \/usr\/include$/;"	m
 opcode	conf.c	/^    OpCodes opcode;$/;"	m	struct:__anon3	file:
+outgoing	client_hash.h	/^	unsigned long long outgoing;			\/**< @brief Outgoing data total*\/$/;"	m	struct:_t_counters
 outgoing	client_list.h	/^    unsigned long long outgoing;        \/**< @brief Outgoing data total*\/$/;"	m	struct:_t_counters
+outgoing	common.h	/^	int outgoing;$/;"	m	struct:client
+outgoing_delta	client_hash.h	/^	unsigned long long outgoing_delta;		\/**< @brief Outgoing data after last report*\/$/;"	m	struct:_t_counters
 outgoing_delta	client_list.h	/^    unsigned long long outgoing_delta;                    \/**< @brief Outgoing data after last report*\/$/;"	m	struct:_t_counters
+outgoing_history	client_hash.h	/^	unsigned long long outgoing_history;	\/**< @brief Outgoing data before wifidog restarted*\/$/;"	m	struct:_t_counters
 outgoing_history	client_list.h	/^    unsigned long long outgoing_history;        \/**< @brief Outgoing data before wifidog restarted*\/$/;"	m	struct:_t_counters
 param	wdctl.h	/^    char *param;$/;"	m	struct:__anon6
 parse_auth_server	conf.c	/^parse_auth_server(FILE * file, const char *filename, int *linenum)$/;"	f	file:
@@ -585,20 +736,23 @@ parse_commandline	commandline.c	/^parse_commandline(int argc, char **argv)$/;"	f
 parse_commandline	wdctl.c	/^parse_commandline(int argc, char **argv)$/;"	f
 parse_firewall_ruleset	conf.c	/^parse_firewall_ruleset(const char *ruleset, FILE * file, const char *filename, int *linenum)$/;"	f	file:
 parse_popular_servers	conf.c	/^parse_popular_servers(const char *ptr)$/;"	f	file:
+parse_trusted_ip_list	conf.c	/^parse_trusted_ip_list(const char *ptr)$/;"	f	file:
 parse_trusted_mac_list	conf.c	/^parse_trusted_mac_list(const char *ptr)$/;"	f	file:
 pdfdir	Makefile	/^pdfdir = ${docdir}$/;"	m
-pidfile	conf.h	/^    char *pidfile;            \/**< @brief pid file path of wifidog *\/$/;"	m	struct:__anon5
+pidfile	conf.h	/^    char *pidfile;                      \/**< @brief pid file path of wifidog *\/$/;"	m	struct:__anon5
 ping	ping_thread.c	/^ping(void)$/;"	f	file:
 pkgdatadir	Makefile	/^pkgdatadir = $(datadir)\/wifidog$/;"	m
 pkgincludedir	Makefile	/^pkgincludedir = $(includedir)\/wifidog$/;"	m
 pkglibdir	Makefile	/^pkglibdir = $(libdir)\/wifidog$/;"	m
 pkglibexecdir	Makefile	/^pkglibexecdir = $(libexecdir)\/wifidog$/;"	m
-popular_servers	conf.h	/^    t_popular_server *popular_servers; \/**< @brief list of popular servers *\/$/;"	m	struct:__anon5
+pong_got_ip_mac	ping_thread.c	/^pong_got_ip_mac(const char *res, int num, struct client *client)$/;"	f
+popular_servers	conf.h	/^    t_popular_server *popular_servers;  \/**< @brief list of popular servers *\/$/;"	m	struct:__anon5
 port	conf.h	/^    char *port;                 \/**< @brief Port to block\/allow *\/$/;"	m	struct:_firewall_rule_t
 prefix	Makefile	/^prefix = \/home\/jacky\/mt7620\/package\/pronetway\/wifidog-gateway-1.3.0$/;"	m
+prev	uthash.h	/^	void *prev;						\/* prev element in app order      *\/$/;"	m	struct:ut_hash_handle
 program_transform_name	Makefile	/^program_transform_name = s,x,x,$/;"	m
 protocol	conf.h	/^    char *protocol;             \/**< @brief tcp, udp, etc ... *\/$/;"	m	struct:_firewall_rule_t
-proxy_port	conf.h	/^    int proxy_port;             \/**< @brief Transparent proxy port (0 to disable) *\/$/;"	m	struct:__anon5
+proxy_port	conf.h	/^    int proxy_port;                     \/**< @brief Transparent proxy port (0 to disable) *\/$/;"	m	struct:__anon5
 psdir	Makefile	/^psdir = ${docdir}$/;"	m
 pstr	pstring.h	/^struct pstr {$/;"	s
 pstr_append_sprintf	pstring.c	/^pstr_append_sprintf(pstr_t *pstr, const char *fmt, ...)$/;"	f
@@ -627,13 +781,14 @@ send_request	wdctl.c	/^send_request(int sock, const char *request)$/;"	f	file:
 served_this_session	wd_util.c	/^long served_this_session = 0;$/;"	v
 sharedstatedir	Makefile	/^sharedstatedir = ${prefix}\/com$/;"	m
 sigchld_handler	gateway.c	/^sigchld_handler(int s)$/;"	f
+signature	uthash.h	/^	uint32_t signature;		\/* used only to find hash tables in external analysis *\/$/;"	m	struct:ut_hash_table
 size	pstring.h	/^    size_t size; \/**< @brief Current maximum size of the buffer. *\/$/;"	m	struct:pstr
 socket	wdctl.h	/^    char *socket;$/;"	m	struct:__anon6
 srcdir	Makefile	/^srcdir = .$/;"	m
-ssl_certs	conf.h	/^    char *ssl_certs;            \/**< @brief Path to SSL certs for auth server$/;"	m	struct:__anon5
-ssl_cipher_list	conf.h	/^    char *ssl_cipher_list;  \/**< @brief List of SSL ciphers allowed. Optional. *\/$/;"	m	struct:__anon5
-ssl_use_sni	conf.h	/^    int ssl_use_sni;            \/**< @brief boolean, whether to enable$/;"	m	struct:__anon5
-ssl_verify	conf.h	/^    int ssl_verify;             \/**< @brief boolean, whether to enable$/;"	m	struct:__anon5
+ssl_certs	conf.h	/^    char *ssl_certs;                    \/**< @brief Path to SSL certs for auth server verification *\/$/;"	m	struct:__anon5
+ssl_cipher_list	conf.h	/^    char *ssl_cipher_list;              \/**< @brief List of SSL ciphers allowed. Optional. *\/$/;"	m	struct:__anon5
+ssl_use_sni	conf.h	/^    int ssl_use_sni;                    \/**< @brief boolean, whether to enable auth server for server name indication, the TLS extension *\/$/;"	m	struct:__anon5
+ssl_verify	conf.h	/^    int ssl_verify;                     \/**< @brief boolean, whether to enable auth server certificate verification *\/$/;"	m	struct:__anon5
 started_time	gateway.c	/^time_t started_time = 0;$/;"	v
 subdir	Makefile	/^subdir = src$/;"	m
 sysconfdir	Makefile	/^sysconfdir = ${prefix}\/etc$/;"	m
@@ -641,16 +796,21 @@ syslog_facility	debug.h	/^    int syslog_facility; \/**< @brief facility to use 
 t_auth_serv	conf.h	/^} t_auth_serv;$/;"	t	typeref:struct:_auth_serv_t
 t_authcode	auth.h	/^} t_authcode;$/;"	t	typeref:enum:__anon1
 t_authresponse	auth.h	/^} t_authresponse;$/;"	t	typeref:struct:_t_authresponse
+t_client	client_hash.h	/^} t_client;$/;"	t	typeref:struct:_t_client
 t_client	client_list.h	/^} t_client;$/;"	t	typeref:struct:_t_client
+t_counters	client_hash.h	/^} t_counters;$/;"	t	typeref:struct:_t_counters
 t_counters	client_list.h	/^} t_counters;$/;"	t	typeref:struct:_t_counters
 t_firewall_rule	conf.h	/^} t_firewall_rule;$/;"	t	typeref:struct:_firewall_rule_t
 t_firewall_ruleset	conf.h	/^} t_firewall_ruleset;$/;"	t	typeref:struct:_firewall_ruleset_t
 t_firewall_target	conf.h	/^} t_firewall_target;$/;"	t	typeref:enum:__anon4
 t_fw_marks	firewall.h	/^} t_fw_marks;$/;"	t	typeref:enum:_t_fw_marks
 t_popular_server	conf.h	/^} t_popular_server;$/;"	t	typeref:struct:_popular_server_t
+t_trusted_ip	conf.h	/^} t_trusted_ip;$/;"	t	typeref:struct:_trusted_ip_t
 t_trusted_mac	conf.h	/^} t_trusted_mac;$/;"	t	typeref:struct:_trusted_mac_t
+tail	uthash.h	/^	struct ut_hash_handle *tail;	\/* tail hh in app order, for fast append *\/$/;"	m	struct:ut_hash_table	typeref:struct:ut_hash_table::ut_hash_handle
 target	conf.h	/^    t_firewall_target target;   \/**< @brief t_firewall_target *\/$/;"	m	struct:_firewall_rule_t
 target_alias	Makefile	/^target_alias = $/;"	m
+tbl	uthash.h	/^	struct ut_hash_table *tbl;$/;"	m	struct:ut_hash_handle	typeref:struct:ut_hash_handle::ut_hash_table
 termination_handler	gateway.c	/^termination_handler(int s)$/;"	f
 thread_client_timeout_check	auth.c	/^thread_client_timeout_check(const void *arg)$/;"	f
 thread_httpd	httpd_thread.c	/^thread_httpd(void *args)$/;"	f
@@ -659,14 +819,28 @@ thread_wdctl	wdctl_thread.c	/^thread_wdctl(void *arg)$/;"	f
 thread_wdctl_handler	wdctl_thread.c	/^thread_wdctl_handler(void *arg)$/;"	f	file:
 tid_fw_counter	gateway.c	/^static pthread_t tid_fw_counter = 0;$/;"	v	file:
 tid_ping	gateway.c	/^static pthread_t tid_ping = 0;$/;"	v	file:
+token	client_hash.h	/^	char *token;							\/**< @brief Client token *\/$/;"	m	struct:_t_client
 token	client_list.h	/^    char *token;                        \/**< @brief Client token *\/$/;"	m	struct:_t_client
+token	common.h	/^	char token[20];$/;"	m	struct:client
 top_build_prefix	Makefile	/^top_build_prefix = ..\/$/;"	m
 top_builddir	Makefile	/^top_builddir = ..$/;"	m
 top_srcdir	Makefile	/^top_srcdir = ..$/;"	m
 transform	Makefile	/^transform = $(program_transform_name)$/;"	m
-trustedmaclist	conf.h	/^    t_trusted_mac *trustedmaclist; \/**< @brief list of trusted macs *\/$/;"	m	struct:__anon5
+trustediplist	conf.h	/^    t_trusted_ip *trustediplist;        \/**< @brief list of trusted ips *\/$/;"	m	struct:__anon5
+trustedmaclist	conf.h	/^    t_trusted_mac *trustedmaclist;      \/**< @brief list of trusted macs *\/$/;"	m	struct:__anon5
+uint32_t	uthash.h	/^typedef unsigned int uint32_t;$/;"	t
+uint8_t	uthash.h	/^typedef unsigned char uint8_t;$/;"	t
 usage	commandline.c	/^usage(void)$/;"	f	file:
 usage	wdctl.c	/^usage(void)$/;"	f	file:
+ut_hash_handle	uthash.h	/^typedef struct ut_hash_handle {$/;"	s
+ut_hash_handle	uthash.h	/^} ut_hash_handle;$/;"	t	typeref:struct:ut_hash_handle
+ut_hash_table	uthash.h	/^typedef struct ut_hash_table {$/;"	s
+ut_hash_table	uthash.h	/^} ut_hash_table;$/;"	t	typeref:struct:ut_hash_table
+uthash_expand_fyi	uthash.h	96;"	d
+uthash_fatal	uthash.h	83;"	d
+uthash_free	uthash.h	89;"	d
+uthash_malloc	uthash.h	86;"	d
+uthash_noexpand_fyi	uthash.h	93;"	d
 validate_popular_servers	conf.c	/^validate_popular_servers(void)$/;"	f	file:
 wd_gethostbyname	util.c	/^wd_gethostbyname(const char *name)$/;"	f
 wdctl_DEPENDENCIES	Makefile	/^wdctl_DEPENDENCIES = libgateway.a$/;"	m
@@ -677,7 +851,7 @@ wdctl_reset	wdctl.c	/^wdctl_reset(void)$/;"	f
 wdctl_reset	wdctl_thread.c	/^wdctl_reset(int fd, const char *arg)$/;"	f	file:
 wdctl_restart	wdctl.c	/^wdctl_restart(void)$/;"	f	file:
 wdctl_restart	wdctl_thread.c	/^wdctl_restart(int afd)$/;"	f	file:
-wdctl_sock	conf.h	/^    char *wdctl_sock;           \/**< @brief wdctl path to socket *\/$/;"	m	struct:__anon5
+wdctl_sock	conf.h	/^    char *wdctl_sock;                   \/**< @brief wdctl path to socket *\/$/;"	m	struct:__anon5
 wdctl_socket_server	wdctl_thread.c	/^static int wdctl_socket_server;$/;"	v	file:
 wdctl_status	wdctl.c	/^wdctl_status(void)$/;"	f	file:
 wdctl_status	wdctl_thread.c	/^wdctl_status(int fd)$/;"	f	file:
@@ -688,4 +862,5 @@ wifidog_DEPENDENCIES	Makefile	/^wifidog_DEPENDENCIES = libgateway.a \\$/;"	m
 wifidog_LDADD	Makefile	/^wifidog_LDADD = libgateway.a $(top_builddir)\/libhttpd\/libhttpd.la$/;"	m
 wifidog_OBJECTS	Makefile	/^wifidog_OBJECTS = $(am_wifidog_OBJECTS)$/;"	m
 wifidog_SOURCES	Makefile	/^wifidog_SOURCES = main.c$/;"	m
+wifidog_cfg_version	firewall.c	/^int wifidog_cfg_version = 1;$/;"	v
 write_to_socket	wdctl_thread.c	/^write_to_socket(int fd, char *text, size_t len)$/;"	f	file:

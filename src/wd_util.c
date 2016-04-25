@@ -166,7 +166,6 @@ get_status_text()
     int count;
     time_t uptime = 0;
     unsigned int days = 0, hours = 0, minutes = 0, seconds = 0;
-    t_trusted_mac *p;
 
     pstr_cat(pstr, "WiFiDog status\n\n");
 
@@ -221,8 +220,18 @@ get_status_text()
     if (config->trustedmaclist != NULL) {
         pstr_cat(pstr, "\nTrusted MAC addresses:\n");
 
-        for (p = config->trustedmaclist; p != NULL; p = p->next) {
-            pstr_append_sprintf(pstr, "  %s\n", p->mac);
+        t_trusted_mac *mac;
+        for (mac = config->trustedmaclist; mac != NULL; mac = mac->next) {
+            pstr_append_sprintf(pstr, "  %s\n", mac->mac);
+        }
+    }
+
+    if (config->trustediplist != NULL) {
+        pstr_cat(pstr, "\nTrusted IP:\n");
+
+        t_trusted_ip *ip;
+        for (ip = config->trustediplist; ip != NULL; ip = ip->next) {
+            pstr_append_sprintf(pstr, "  %s\n", ip->ip);
         }
     }
 
