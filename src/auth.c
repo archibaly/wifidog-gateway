@@ -103,8 +103,8 @@ logout_client(t_client * client)
     /* Advertise the logout if we have an auth server */
     if (config->auth_servers != NULL) {
         UNLOCK_CLIENT_LIST();
-        auth_server_nrequest(&authresponse, REQUEST_TYPE_LOGOUT,
-                            client->ip, client->mac, client->token, wifidog_cfg_version,
+        auth_server_request(&authresponse, REQUEST_TYPE_LOGOUT,
+                            client->ip, client->mac, client->token,
                             client->counters.incoming, client->counters.outgoing, client->counters.incoming_delta, client->counters.outgoing_delta);
 
         if (authresponse.authcode == AUTH_ERROR)
@@ -113,6 +113,18 @@ logout_client(t_client * client)
     }
 
     client_free_node(client);
+}
+
+void
+logout_nclient(int client_num, struct client *client)
+{
+    t_authresponse authresponse;
+    const s_config *config = config_get_config();
+    if (config->auth_servers != NULL) {
+        auth_server_nrequest(&authresponse, REQUEST_TYPE_LOGOUT, client_num, client);
+        if (authresponse.authcode == AUTH_ERROR)
+            debug(LOG_WARNING, "Auth server error when reporting logout");
+    }
 }
 
 /** Authenticates a single client against the central server and returns when done

@@ -149,29 +149,29 @@ auth_server_request(t_authresponse * authresponse, const char *request_type, con
 }
 
 void
-auth_server_build_request(char *request, int size, const char *ip, const char *mac, const char *token,
-                          unsigned long long int incoming, unsigned long long int outgoing)
+auth_server_build_request(char *request, int size, int client_num, struct client *client)
 {
-    strncpy(request, "&client_num=1&client_list=", size);
+    snprintf(request, size, "&client_num=%d&client_list=", client_num);
     int offset = strlen(request);
+    char *safe_token;
 
-    char *safe_token = httpdUrlEncode(token);
-    snprintf(request + offset, size - offset, "%s|%s|%s|%lld|%lld", ip, mac, safe_token, incoming, outgoing);
-    free(safe_token);
+    int i;
+    for (i = 0; i < client_num; i++) {
+        safe_token = httpdUrlEncode(client[i].token);
+        snprintf(request + offset, size - offset, "%s|%s|%s|%d|%d;", client[i].ip, client[i].mac, safe_token, client[i].incoming, client[i].outgoing);
+        offset = strlen(request);
+        free(safe_token);
+    }
+    request[strlen(request)-1] = '\0';    /* trim the last ';' */
 }
 
 t_authcode
-auth_server_nrequest(t_authresponse * authresponse, const char *request_type, const char *ip, const char *mac, const char *token, int wifidog_cfg_version,
-                     unsigned long long int incoming, unsigned long long int outgoing, unsigned long long int incoming_delta, unsigned long long int outgoing_delta)
+auth_server_nrequest(t_authresponse * authresponse, const char *request_type, int client_num, struct client *client)
 {
-    (void)incoming_delta;
-    (void)outgoing_delta;
-
     s_config *config = config_get_config();
     int sockfd;
     char buf[MAX_BUF];
     char *tmp;
-    char *safe_token;
     t_auth_serv *auth_server = NULL;
     auth_server = get_auth_server();
 
@@ -184,9 +184,8 @@ auth_server_nrequest(t_authresponse * authresponse, const char *request_type, co
 	 * TODO: XXX change the PHP so we can harmonize stage as request_type
 	 * everywhere.
 	 */
-    safe_token = httpdUrlEncode(token);
     char request[MAX_BUF];
-    auth_server_build_request(request, sizeof(request) - 1, ip, mac, token, incoming, outgoing);
+    auth_server_build_request(request, sizeof(request) - 1, client_num, client);
     snprintf(buf, (sizeof(buf) - 1),
              "GET %s%sstage=%s%s&gw_id=%s&version=%d HTTP/1.0\r\n"
              "User-Agent: WiFiDog %s\r\n"
@@ -198,7 +197,6 @@ auth_server_nrequest(t_authresponse * authresponse, const char *request_type, co
              request,
              config->gw_id, wifidog_cfg_version, VERSION, auth_server->authserv_hostname);
     debug(LOG_INFO, "auth_server_request = %s", buf);
-    free(safe_token);
 
     char *res;
 #ifdef USE_CYASSL
@@ -231,26 +229,6 @@ auth_server_nrequest(t_authresponse * authresponse, const char *request_type, co
     free(res);
     return (AUTH_ERROR);
 }
-
-#if 0
-void
-auth_server_build_request(int client_num, char *request, int size, t_client *client)
-{
-    t_client *p1, *p2;
-
-    snprintf(request, size, "client_num=%d&client_list=", client_num);
-    int offset = strlen(request);
-
-    for (p1 = p2 = client; NULL != p1; p1 = p2) {
-        p2 = p1->next;
-        char *safe_token = httpdUrlEncode(p1->token);
-        snprintf(request + offset, size - offset, "%s|%s|%s|%lld|%lld;", p1->ip, p1->mac, safe_token, p1->counters.incoming, p1->counters.outgoing);
-        offset = strlen(request);
-        free(safe_token);
-    }
-    request[strlen(request)-1] = '\0';    /* trim the last ';' */
-}
-#endif
 
 /* Tries really hard to connect to an auth server. Returns a file descriptor, -1 on error
  */

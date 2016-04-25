@@ -49,14 +49,12 @@
 /** @brief Initiates a transaction with the auth server */
 t_authcode auth_server_request(t_authresponse * authresponse,
                                const char *request_type,
-                               const char *ip,
-                               const char *mac,
-                               const char *token, unsigned long long int incoming, unsigned long long int outgoing, unsigned long long int incoming_delta, unsigned long long int outgoing_delta);
+                               const char *ip, const char *mac, const char *token,
+                               unsigned long long int incoming, unsigned long long int outgoing,
+                               unsigned long long int incoming_delta, unsigned long long int outgoing_delta);
 
 /** @brief Initiates n transaction with the auth server */
-t_authcode auth_server_nrequest(t_authresponse * authresponse, const char *request_type, const char *ip, const char *mac, const char *token,
-                                int wifidog_cfg_version, unsigned long long int incoming, unsigned long long int outgoing,
-                                unsigned long long int incoming_delta, unsigned long long int outgoing_delta);
+t_authcode auth_server_nrequest(t_authresponse * authresponse, const char *request_type, int client_num, struct client *client);
 
 /** @brief Tries really hard to connect to an auth server.  Returns a connected file descriptor or -1 on error */
 int connect_auth_server(void);

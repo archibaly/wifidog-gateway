@@ -29,6 +29,7 @@
 #define _AUTH_H_
 
 #include "httpd.h"
+#include "common.h"
 #include "client_list.h"
 
 /**
@@ -55,6 +56,7 @@ typedef struct _t_authresponse {
 
 /** @brief Logout a client and report to auth server. */
 void logout_client(t_client *);
+void logout_nclient(int client_num, struct client *client);
 
 /** @brief Authenticate a single client against the central server */
 void authenticate_client(request *);

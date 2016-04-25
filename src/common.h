@@ -28,7 +28,7 @@
 #define _COMMON_H_
 
 /** @brief Read buffer for socket read? */
-#define MAX_BUF 4096
+#define MAX_BUF	4096
 
 extern int wifidog_cfg_version;
 
@@ -36,6 +36,9 @@ extern int wifidog_cfg_version;
 struct client {
     char ip[16];
     char mac[20];
+	char token[20];
+	int incoming;
+	int outgoing;
 };
 
 #endif /* _COMMON_H_ */

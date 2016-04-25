@@ -251,7 +251,18 @@ fw_destroy(void)
     return iptables_fw_destroy();
 }
 
-/**Probably a misnomer, this function actually refreshes the entire client list's traffic counter, re-authenticates every client with the central server and update's the central servers traffic counters and notifies it if a client has logged-out.
+static void
+client_copy(struct client *dst, const t_client *src)
+{
+    strcpy(dst->ip, src->ip);
+    strcpy(dst->mac, src->mac);
+    strcpy(dst->token, src->token);
+    dst->incoming = src->counters.incoming;
+    dst->outgoing = src->counters.outgoing;
+}
+
+/**Probably a misnomer, this function actually refreshes the entire client list's traffic counter,
+ * re-authenticates every client with the central server and update's the central servers traffic counters and notifies it if a client has logged-out.
  * @todo Make this function smaller and use sub-fonctions
  */
 void
@@ -276,113 +287,50 @@ fw_sync_with_authserver(void)
     client_list_dup(&worklist);
     UNLOCK_CLIENT_LIST();
 
+    struct client logout_clients[4];
+    struct client counters_clients[4];
+    int logout_cnt = 0;
+    int counters_cnt = 0;
+
     for (p1 = p2 = worklist; NULL != p1; p1 = p2) {
         p2 = p1->next;
-
-        /* Ping the client, if he responds it'll keep activity on the link.
-         * However, if the firewall blocks it, it will not help.  The suggested
-         * way to deal witht his is to keep the DHCP lease time extremely
-         * short:  Shorter than config->checkinterval * config->clienttimeout */
         icmp_ping(p1->ip);
-        /* Update the counters on the remote server only if we have an auth server */
-        if (config->auth_servers != NULL) {
-            auth_server_nrequest(&authresponse, REQUEST_TYPE_COUNTERS, p1->ip, p1->mac, p1->token, wifidog_cfg_version,
-                                 p1->counters.incoming, p1->counters.outgoing, p1->counters.incoming_delta, p1->counters.outgoing_delta);
+        client_copy(counters_clients + counters_cnt, p1);
+        counters_cnt++;
+        if (counters_cnt == 4) {
+            if (config->auth_servers != NULL)
+                auth_server_nrequest(&authresponse, REQUEST_TYPE_COUNTERS, counters_cnt, counters_clients);
+            counters_cnt = 0;
         }
 
         time_t current_time = time(NULL);
-        debug(LOG_INFO,
-              "Checking client %s for timeout:  Last updated %ld (%ld seconds ago), timeout delay %ld seconds, current time %ld, ",
-              p1->ip, p1->counters.last_updated, current_time - p1->counters.last_updated,
-              config->checkinterval * config->clienttimeout, current_time);
         if (p1->counters.last_updated + (config->checkinterval * config->clienttimeout) <= current_time) {
             /* Timing out user */
-            debug(LOG_INFO, "%s - Inactive for more than %ld seconds, removing client and denying in firewall",
-                  p1->ip, config->checkinterval * config->clienttimeout);
             LOCK_CLIENT_LIST();
             tmp = client_list_find_by_client(p1);
             if (NULL != tmp) {
-                logout_client(tmp);
+                client_copy(logout_clients + logout_cnt, tmp);
+                logout_cnt++;
+
+                fw_deny(tmp);
+                client_list_remove(tmp);
+                client_free_node(tmp);
+
+                if (logout_cnt == 4) {
+                    logout_nclient(logout_cnt, logout_clients);
+                    logout_cnt = 0;
+                }
             } else {
                 debug(LOG_NOTICE, "Client was already removed. Not logging out.");
             }
             UNLOCK_CLIENT_LIST();
-        } else {
-            /*
-             * This handles any change in
-             * the status this allows us
-             * to change the status of a
-             * user while he's connected
-             *
-             * Only run if we have an auth server
-             * configured!
-             */
-            LOCK_CLIENT_LIST();
-            tmp = client_list_find_by_client(p1);
-            if (NULL == tmp) {
-                UNLOCK_CLIENT_LIST();
-                debug(LOG_NOTICE, "Client was already removed. Skipping auth processing");
-                continue;       /* Next client please */
-            }
-
-            if (config->auth_servers != NULL) {
-                switch (authresponse.authcode) {
-                case AUTH_DENIED:
-                    debug(LOG_NOTICE, "%s - Denied. Removing client and firewall rules", tmp->ip);
-                    fw_deny(tmp);
-                    client_list_delete(tmp);
-                    break;
-
-                case AUTH_VALIDATION_FAILED:
-                    debug(LOG_NOTICE, "%s - Validation timeout, now denied. Removing client and firewall rules",
-                          tmp->ip);
-                    fw_deny(tmp);
-                    client_list_delete(tmp);
-                    break;
-
-                case AUTH_ALLOWED:
-                    if (tmp->fw_connection_state != FW_MARK_KNOWN) {
-                        debug(LOG_INFO, "%s - Access has changed to allowed, refreshing firewall and clearing counters",
-                              tmp->ip);
-                        //WHY did we deny, then allow!?!? benoitg 2007-06-21
-                        //fw_deny(tmp->ip, tmp->mac, tmp->fw_connection_state); /* XXX this was possibly to avoid dupes. */
-
-                        if (tmp->fw_connection_state != FW_MARK_PROBATION) {
-                            tmp->counters.incoming_delta =
-                             tmp->counters.outgoing_delta =
-                             tmp->counters.incoming =
-                             tmp->counters.outgoing = 0;
-                        } else {
-                            //We don't want to clear counters if the user was in validation, it probably already transmitted data..
-                            debug(LOG_INFO,
-                                  "%s - Skipped clearing counters after all, the user was previously in validation",
-                                  tmp->ip);
-                        }
-                        fw_allow(tmp, FW_MARK_KNOWN);
-                    }
-                    break;
-
-                case AUTH_VALIDATION:
-                    /*
-                     * Do nothing, user
-                     * is in validation
-                     * period
-                     */
-                    debug(LOG_INFO, "%s - User in validation period", tmp->ip);
-                    break;
-
-                case AUTH_ERROR:
-                    debug(LOG_WARNING, "Error communicating with auth server - leaving %s as-is for now", tmp->ip);
-                    break;
-
-                default:
-                    debug(LOG_ERR, "I do not know about authentication code %d", authresponse.authcode);
-                    break;
-                }
-            }
-            UNLOCK_CLIENT_LIST();
         }
     }
+    if (counters_cnt > 0)
+        if (config->auth_servers != NULL)
+            auth_server_nrequest(&authresponse, REQUEST_TYPE_COUNTERS, counters_cnt, counters_clients);
+    if (logout_cnt > 0)
+        logout_nclient(logout_cnt, logout_clients);
 
     client_list_destroy(worklist);
 }
