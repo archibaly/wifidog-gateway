@@ -98,8 +98,10 @@ typedef enum {
     oFirewallRuleSet,
     oTrustedMACList,
     oTrustedIPList,
+    oTrustedWANHOSTList,
     oBlackMACList,
     oBlackIPList,
+    oBlackWANHOSTList,
     oPopularServers,
     oHtmlMessageFile,
     oProxyPort,
@@ -148,8 +150,10 @@ static const struct {
     "firewallrule", oFirewallRule}, {
     "trustedmaclist", oTrustedMACList}, {
     "trustediplist", oTrustedIPList}, {
+    "trustedwanhostlist", oTrustedWANHOSTList}, {
     "blackmaclist", oBlackMACList}, {
     "blackiplist", oBlackIPList}, {
+    "blackwanhostlist", oBlackWANHOSTList}, {
     "popularservers", oPopularServers}, {
     "htmlmessagefile", oHtmlMessageFile}, {
     "proxyport", oProxyPort}, {
@@ -168,6 +172,8 @@ static void parse_trusted_mac_list(const char *);
 static void parse_trusted_ip_list(const char *);
 static void parse_black_mac_list(const char *);
 static void parse_black_ip_list(const char *);
+static void parse_trusted_wan_host_list(const char *);
+static void parse_black_wan_host_list(const char *);
 static void parse_popular_servers(const char *);
 static void validate_popular_servers(void);
 static void add_popular_server(const char *);
@@ -750,11 +756,17 @@ config_read(const char *filename)
                 case oTrustedIPList:
                     parse_trusted_ip_list(p1);
                     break;
+                case oTrustedWANHOSTList:
+                    parse_trusted_wan_host_list(p1);
+                    break;
                 case oBlackMACList:
                     parse_black_mac_list(p1);
                     break;
                 case oBlackIPList:
                     parse_black_ip_list(p1);
+                    break;
+                case oBlackWANHOSTList:
+                    parse_black_wan_host_list(p1);
                     break;
                 case oPopularServers:
                     parse_popular_servers(rawarg);
@@ -950,7 +962,7 @@ parse_trusted_mac_list(const char *ptr)
                         p->next = NULL;
                     } else {
                         debug(LOG_ERR,
-                              "MAC address [%s] already on trusted list. See option TrustedMACList in wifidog.conf file ",
+                              "MAC address [%s] already on trusted list. See option TrustedMACList in wifidog.conf file",
                               mac);
                     }
                 }
@@ -1021,7 +1033,7 @@ parse_black_mac_list(const char *ptr)
                         p->next = NULL;
                     } else {
                         debug(LOG_ERR,
-                              "MAC address [%s] already on black list. See option BlackMACList in wifidog.conf file ",
+                              "MAC address [%s] already on black list. See option BlackMACList in wifidog.conf file",
                               mac);
                     }
                 }
@@ -1102,7 +1114,7 @@ parse_trusted_ip_list(const char *ptr)
                         p->next = NULL;
                     } else {
                         debug(LOG_ERR,
-                              "IP [%s] already on trusted list. See option TrustedIPList in wifidog.conf file ",
+                              "IP [%s] already on trusted list. See option TrustedIPList in wifidog.conf file",
                               ip);
                     }
                 }
@@ -1141,7 +1153,7 @@ parse_black_ip_list(const char *ptr)
             return;
         } else {
             if (sscanf(possibleip, " %15[0-9.]", ip) == 1) {
-                /* Copy mac to the list */
+                /* Copy ip to the list */
 
                 debug(LOG_DEBUG, "Adding IP [%s] to black list", ip);
 
@@ -1173,7 +1185,7 @@ parse_black_ip_list(const char *ptr)
                         p->next = NULL;
                     } else {
                         debug(LOG_ERR,
-                              "IP [%s] already on black list. See option BlackIPList in wifidog.conf file ",
+                              "IP [%s] already on black list. See option BlackIPList in wifidog.conf file",
                               ip);
                     }
                 }
@@ -1184,6 +1196,122 @@ parse_black_ip_list(const char *ptr)
     free(ptrcopy);
 
     free(ip);
+}
+
+static void
+parse_trusted_wan_host_list(const char *ptr)
+{
+    char *ptrcopy = NULL;
+    char *possiblehost = NULL;
+    char *host = NULL;
+    t_trusted_or_black_wan_host *p = NULL;
+
+    debug(LOG_DEBUG, "Parsing string [%s] for trusted Wan Host", ptr);
+
+    host = safe_malloc(64);
+
+    /* strsep modifies original, so let's make a copy */
+    ptrcopy = safe_strdup(ptr);
+
+    while ((possiblehost = strsep(&ptrcopy, ","))) {
+        strcpy(host, possiblehost);
+        debug(LOG_DEBUG, "Adding host [%s] to trusted list", host);
+
+        if (config.trustedwanhostlist == NULL) {
+            config.trustedwanhostlist = safe_malloc(sizeof(t_trusted_or_black_wan_host));
+            config.trustedwanhostlist->host = safe_strdup(host);
+            config.trustedwanhostlist->next = NULL;
+        } else {
+            int skiphost;
+            /* Advance to the last entry */
+            p = config.trustedwanhostlist;
+            skiphost = 0;
+            /* Check before loop to handle case were ip is a duplicate
+             * of the first and only item in the list so far.
+             */
+            if (0 == strcmp(p->host, host)) {
+                skiphost = 1;
+            }
+            while (p->next != NULL) {
+                if (0 == strcmp(p->host, host)) {
+                    skiphost = 1;
+                }
+                p = p->next;
+            }
+            if (!skiphost) {
+                p->next = safe_malloc(sizeof(t_trusted_or_black_wan_host));
+                p = p->next;
+                p->host = safe_strdup(host);
+                p->next = NULL;
+            } else {
+                debug(LOG_ERR,
+                      "Host [%s] already on trusted list. See option TrustedWANHOSTList in wifidog.conf file",
+                      host);
+            }
+        }
+    }
+
+    free(ptrcopy);
+
+    free(host);
+}
+
+static void
+parse_black_wan_host_list(const char *ptr)
+{
+    char *ptrcopy = NULL;
+    char *possiblehost = NULL;
+    char *host = NULL;
+    t_trusted_or_black_wan_host *p = NULL;
+
+    debug(LOG_DEBUG, "Parsing string [%s] for black Wan Host", ptr);
+
+    host = safe_malloc(64);
+
+    /* strsep modifies original, so let's make a copy */
+    ptrcopy = safe_strdup(ptr);
+
+    while ((possiblehost = strsep(&ptrcopy, ","))) {
+        strcpy(host, possiblehost);
+        debug(LOG_DEBUG, "Adding host [%s] to black list", host);
+
+        if (config.blackwanhostlist == NULL) {
+            config.blackwanhostlist = safe_malloc(sizeof(t_trusted_or_black_wan_host));
+            config.blackwanhostlist->host = safe_strdup(host);
+            config.blackwanhostlist->next = NULL;
+        } else {
+            int skiphost;
+            /* Advance to the last entry */
+            p = config.blackwanhostlist;
+            skiphost = 0;
+            /* Check before loop to handle case were ip is a duplicate
+             * of the first and only item in the list so far.
+             */
+            if (0 == strcmp(p->host, host)) {
+                skiphost = 1;
+            }
+            while (p->next != NULL) {
+                if (0 == strcmp(p->host, host)) {
+                    skiphost = 1;
+                }
+                p = p->next;
+            }
+            if (!skiphost) {
+                p->next = safe_malloc(sizeof(t_trusted_or_black_wan_host));
+                p = p->next;
+                p->host = safe_strdup(host);
+                p->next = NULL;
+            } else {
+                debug(LOG_ERR,
+                      "Host [%s] already on black list. See option BlackWANHOSTList in wifidog.conf file",
+                      host);
+            }
+        }
+    }
+
+    free(ptrcopy);
+
+    free(host);
 }
 
 /** @internal
