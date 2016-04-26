@@ -109,6 +109,8 @@ got_pong_value(const char *str, const char *key, char *value, int size)
             return 1;
         }
     }
+    if (value)
+        value[0] = '\0';
     return 0;
 }
 
@@ -131,7 +133,8 @@ int got_conf_value(const char *str, const char *key, char *value, int size)
             return 1;
         }
     }
-    value[0] = '\0';
+    if (value)
+        value[0] = '\0';
     return 0;
 }
 
@@ -235,16 +238,19 @@ pong_got_ip_mac(const char *res, int num, struct client *client)
         tmp = pos;
         pos += find_char(res + pos, '|');
         strncpy(client[i].ip, res + tmp, pos - tmp);
+        client[i].ip[pos-tmp] = '\0';
         pos++;
 
         /* get mac */
         tmp = pos;
         if (i == num - 1) { /* no ';' for the last one */
             strncpy(client[i].mac, res + tmp, strlen(res) - tmp);
+            client[i].mac[strlen(res)-tmp] = '\0';
             return 1;
         } else {
             pos += find_char(res + pos, ';');
             strncpy(client[i].mac, res + tmp, pos - tmp);
+            client[i].mac[pos-tmp] = '\0';
         }
         pos++;
     }
