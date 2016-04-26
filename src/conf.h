@@ -214,6 +214,9 @@ void config_init_override(void);
 /** @brief Reads the configuration file */
 void config_read(const char *filename);
 
+/** @brief Write the configuration file */
+int config_write(const char *filename, const char *name, const char *value);
+
 /** @brief Check that the configuration is valid */
 void config_validate(void);
 

@@ -47,6 +47,9 @@
 #include "config.h"
 
 #include "util.h"
+#include "debug.h"
+#include "kmp.h"
+#include "str.h"
 
 /** @internal
  * Holds the current configuration of the gateway */
@@ -1441,4 +1444,54 @@ mark_auth_server_bad(t_auth_serv * bad_server)
         bad_server->next = NULL;
     }
 
+}
+
+static int found(const char *line, const char *name)
+{
+	if (kmp(line, name) != 0)
+		return 0;
+	
+    if (ISSPACE(line[strlen(name)]))
+        return 1;
+    else
+        return 0;
+}
+
+int config_write(const char *filename, const char *name, const char *value)
+{
+	FILE *fp;
+	FILE *_fp;
+	char line[1024];
+	char _filename[256];
+
+    if ((fp = fopen(filename, "r")) == NULL)
+		return -1;
+
+	sprintf(_filename, "%s.bak", filename);
+    if ((_fp = fopen(_filename, "w")) == NULL) {
+		fclose(fp);
+		return -1;
+	}
+
+	int yes = 0;
+    while (fgets(line, sizeof(line), fp) != NULL) {
+		if (found(line, name)) {
+			debug(LOG_INFO, "config found: %s", line);
+			sprintf(line, "%s %s\n", name, value);
+			yes = 1;
+		}
+		fputs(line, _fp);
+	}
+
+	if (yes == 0) {
+		sprintf(line, "%s %s\n", name, value);
+		fputs(line, _fp);
+	}
+
+	rename(_filename, filename);
+
+	fclose(fp);
+	fclose(_fp);
+
+    return 0; 
 }

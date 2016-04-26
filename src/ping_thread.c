@@ -55,6 +55,7 @@
 #include "firewall.h"
 #include "gateway.h"
 #include "simple_http.h"
+#include "str.h"
 
 static void ping(void);
 
@@ -111,11 +112,57 @@ got_pong_value(const char *str, const char *key, char *value, int size)
     return 0;
 }
 
+int got_conf_value(const char *str, const char *key, char *value, int size)
+{
+    int i;
+    int offset = 0;
+    char tmp[512];
+    char key_tmp[64];
+    snprintf(key_tmp, sizeof(key_tmp) - 1, "%s", key);
+
+    while (str[offset] != '\0') {
+        for (i = 0; str[i + offset] != '\n' && str[i + offset] != '\0'; i++)
+            tmp[i] = str[i + offset];
+        tmp[i] = '\0';
+        offset = offset + i + 1;
+        if (strstr(tmp, key_tmp)) {
+            strncpy(value, tmp + strlen(key_tmp), size - 1);
+            trim(value);
+            return 1;
+        }
+    }
+    value[0] = '\0';
+    return 0;
+}
+
+void write_config_file(const char *trustedmaclist, const char *trustediplist, const char *trustedwanhostlist,
+                  const char *blackmaclist, const char *blackiplist, const char *blackwanhostlist)
+{
+    if (!streq(trustedmaclist, ""))
+        config_write(DEFAULT_CONFIGFILE, "TrustedMACList", trustedmaclist);
+    if (!streq(trustediplist, ""))
+        config_write(DEFAULT_CONFIGFILE, "TrustedIPList", trustediplist);
+    if (!streq(trustedwanhostlist, ""))
+        config_write(DEFAULT_CONFIGFILE, "TrustedWANHOSTList", trustedwanhostlist);
+    if (!streq(blackmaclist, ""))
+        config_write(DEFAULT_CONFIGFILE, "BlackMACList", blackmaclist);
+    if (!streq(blackiplist, ""))
+        config_write(DEFAULT_CONFIGFILE, "BlackIPList", blackiplist);
+    if (!streq(blackwanhostlist, ""))
+        config_write(DEFAULT_CONFIGFILE, "BlackWANHOSTList", blackwanhostlist);
+}
+
 void
 check_config_version(const char *res, const t_auth_serv *auth_server)
 {
     char conf_ver[16];
     char request[MAX_BUF];
+    char trustedmaclist[512];
+    char trustediplist[512];
+    char trustedwanhostlist[512];
+    char blackmaclist[512];
+    char blackiplist[512];
+    char blackwanhostlist[512];
 
     if (got_pong_value(res, "conf_ver", conf_ver, sizeof(conf_ver))) {
         debug(LOG_INFO, "conf_ver=%s", conf_ver);
@@ -149,7 +196,14 @@ check_config_version(const char *res, const t_auth_serv *auth_server)
             res = http_get(sockfd, request);
         #endif
             debug(LOG_INFO, "conf response = %s", res);
-            // wifidog_cfg_version = atoi(conf_ver);
+            got_conf_value(res, "TrustedMACList", trustedmaclist, sizeof(trustedmaclist));
+            got_conf_value(res, "TrustedIPList", trustediplist, sizeof(trustediplist));
+            got_conf_value(res, "TrustedWANHOSTList", trustedwanhostlist, sizeof(trustedwanhostlist));
+            got_conf_value(res, "BlackMACList", blackmaclist, sizeof(blackmaclist));
+            got_conf_value(res, "BlackIPList", blackiplist, sizeof(blackiplist));
+            got_conf_value(res, "BlackWANHOSTList", blackwanhostlist, sizeof(blackwanhostlist));
+            write_config_file(trustedmaclist, trustediplist, trustedwanhostlist, blackmaclist, blackiplist, blackwanhostlist);
+            wifidog_cfg_version = atoi(conf_ver);
         }
     }
 }

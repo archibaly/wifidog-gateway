@@ -438,18 +438,26 @@ iptables_fw_init(void)
     char port[6];
     for (host = config->trustedwanhostlist; host != NULL; host = host->next) {
         debug(LOG_INFO, "trusted wan host = %s", host->host);
-        if (got_port(host->host, new_host, port))
-            iptables_do_command("-t filter -I " CHAIN_GLOBAL " -d %s -p tcp --dport %s -j ACCEPT", new_host, port);
-        else
+        if (got_port(host->host, new_host, port)) {
+            if (strcmp(port, "0") == 0)
+                iptables_do_command("-t filter -I " CHAIN_GLOBAL " -d %s -p tcp -j ACCEPT", host->host);
+            else
+                iptables_do_command("-t filter -I " CHAIN_GLOBAL " -d %s -p tcp --dport %s -j ACCEPT", new_host, port);
+        } else {
             iptables_do_command("-t filter -I " CHAIN_GLOBAL " -d %s -p tcp -j ACCEPT", host->host);
+        }
     }
 
     for (host = config->blackwanhostlist; host != NULL; host = host->next) {
         debug(LOG_INFO, "black wan host = %s", host->host);
-        if (got_port(host->host, new_host, port))
-            iptables_do_command("-t filter -I " CHAIN_GLOBAL " -d %s -p tcp --dport %s -j REJECT", new_host, port);
-        else
+        if (got_port(host->host, new_host, port)) {
+            if (strcmp(port, "0") == 0)
+                iptables_do_command("-t filter -I " CHAIN_GLOBAL " -d %s -p tcp -j ACCEPT", host->host);
+            else
+                iptables_do_command("-t filter -I " CHAIN_GLOBAL " -d %s -p tcp --dport %s -j ACCEPT", new_host, port);
+        } else {
             iptables_do_command("-t filter -I " CHAIN_GLOBAL " -d %s -p tcp -j REJECT", host->host);
+        }
     }
 
     UNLOCK_CONFIG();
