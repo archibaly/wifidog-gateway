@@ -99,6 +99,7 @@ typedef enum {
     oSyslogFacility,
     oFirewallRule,
     oFirewallRuleSet,
+    oConfigVerison,
     oTrustedMACList,
     oTrustedIPList,
     oTrustedWANHOSTList,
@@ -151,6 +152,7 @@ static const struct {
     "authscriptpathfragment", oAuthServAuthScriptPathFragment}, {
     "firewallruleset", oFirewallRuleSet}, {
     "firewallrule", oFirewallRule}, {
+    "configversion", oConfigVerison}, {
     "trustedmaclist", oTrustedMACList}, {
     "trustediplist", oTrustedIPList}, {
     "trustedwanhostlist", oTrustedWANHOSTList}, {
@@ -752,6 +754,9 @@ config_read(const char *filename)
                     break;
                 case oFirewallRuleSet:
                     parse_firewall_ruleset(p1, fd, filename, &linenum);
+                    break;
+                case oConfigVerison:
+                    config.configversion = safe_strdup(p1);
                     break;
                 case oTrustedMACList:
                     parse_trusted_mac_list(p1);

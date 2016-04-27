@@ -192,6 +192,7 @@ typedef struct {
     char *ssl_cipher_list;                              /**< @brief List of SSL ciphers allowed. Optional. */
     int ssl_use_sni;                                    /**< @brief boolean, whether to enable auth server for server name indication, the TLS extension */
     t_firewall_ruleset *rulesets;                       /**< @brief firewall rules */
+    char *configversion;                                /**< @brief config file version */
     t_trusted_or_black_mac *trustedmaclist;             /**< @brief list of trusted macs */
     t_trusted_or_black_ip *trustediplist;               /**< @brief list of trusted ips */
     t_trusted_or_black_wan_host *trustedwanhostlist;    /**< @brief list of trusted wan hosts */

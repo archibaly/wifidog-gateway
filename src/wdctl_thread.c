@@ -55,7 +55,6 @@
 #include "gateway.h"
 #include "safe.h"
 
-
 static int create_unix_socket(const char *);
 static int write_to_socket(int, char *, size_t);
 static void *thread_wdctl_handler(void *);
@@ -80,7 +79,7 @@ create_unix_socket(const char *sock_name)
         return -1;
     }
 
-    sock = socket(PF_UNIX, SOCK_STREAM, 0);
+    sock = socket(AF_UNIX, SOCK_STREAM, 0);
 
     if (sock < 0) {
         debug(LOG_DEBUG, "Could not get unix socket: %s", strerror(errno));
@@ -126,10 +125,10 @@ thread_wdctl(void *arg)
     pthread_t tid;
     socklen_t len;
 
-    debug(LOG_DEBUG, "Starting wdctl.");
+    debug(LOG_INFO, "Starting wdctl.");
 
     sock_name = (char *)arg;
-    debug(LOG_DEBUG, "Socket name: %s", sock_name);
+    debug(LOG_INFO, "Socket name: %s", sock_name);
 
     debug(LOG_DEBUG, "Creating socket");
     wdctl_socket_server = create_unix_socket(sock_name);
@@ -198,7 +197,7 @@ thread_wdctl_handler(void *arg)
         pthread_exit(NULL);
     }
 
-    debug(LOG_DEBUG, "Request received: [%s]", request);
+    debug(LOG_INFO, "Request received: [%s]", request);
 
     if (strncmp(request, "status", 6) == 0) {
         wdctl_status(fd);
@@ -308,7 +307,7 @@ wdctl_restart(int afd)
 
         close(sock);
 
-        debug(LOG_DEBUG, "Received connection from child.  Sending them all existing clients");
+        debug(LOG_INFO, "Received connection from child.  Sending them all existing clients");
 
         /* The child is connected. Send them over the socket the existing clients */
         LOCK_CLIENT_LIST();

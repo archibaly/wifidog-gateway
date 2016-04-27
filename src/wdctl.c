@@ -81,7 +81,6 @@ usage(void)
 static void
 init_config(void)
 {
-
     config.socket = strdup(DEFAULT_SOCK);
     config.command = WDCTL_UNDEF;
 }

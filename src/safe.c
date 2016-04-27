@@ -124,7 +124,7 @@ safe_strdup(const char *s)
     char *retval = NULL;
     if (!s) {
         debug(LOG_CRIT, "safe_strdup called with NULL which would have crashed strdup. Bailing out");
-        exit(1);
+        return NULL;
     }
     retval = strdup(s);
     if (!retval) {

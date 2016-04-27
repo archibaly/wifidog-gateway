@@ -138,9 +138,11 @@ int got_conf_value(const char *str, const char *key, char *value, int size)
     return 0;
 }
 
-void write_config_file(const char *trustedmaclist, const char *trustediplist, const char *trustedwanhostlist,
-                  const char *blackmaclist, const char *blackiplist, const char *blackwanhostlist)
+void write_config_file(const char *confver, const char *trustedmaclist, const char *trustediplist, const char *trustedwanhostlist,
+                       const char *blackmaclist, const char *blackiplist, const char *blackwanhostlist)
 {
+    if (!streq(confver, ""))
+        config_write(DEFAULT_CONFIGFILE, "ConfigVersion", confver);
     if (!streq(trustedmaclist, ""))
         config_write(DEFAULT_CONFIGFILE, "TrustedMACList", trustedmaclist);
     if (!streq(trustediplist, ""))
@@ -167,9 +169,15 @@ check_config_version(const char *res, const t_auth_serv *auth_server)
     char blackiplist[512];
     char blackwanhostlist[512];
 
+    char *configverison;
+    LOCK_CONFIG();
+    configverison = config_get_config()->configversion;
+    UNLOCK_CONFIG();
+
+
     if (got_pong_value(res, "conf_ver", conf_ver, sizeof(conf_ver))) {
         debug(LOG_INFO, "conf_ver=%s", conf_ver);
-        if (atoi(conf_ver) > wifidog_cfg_version) { /* newer than me */
+        if (atoi(conf_ver) > atoi(configverison)) { /* newer than me */
             int sockfd = connect_auth_server();
             if (sockfd == -1) {
                 debug(LOG_ERR, "connect auth server error!");
@@ -177,13 +185,13 @@ check_config_version(const char *res, const t_auth_serv *auth_server)
             }
             /* send conf request */
             snprintf(request, sizeof(request) - 1,
-                     "GET %sconf/?gw_id=%s&version=%d HTTP/1.0\r\n"
+                     "GET %sconf/?gw_id=%s&version=%s HTTP/1.0\r\n"
                      "User-Agent: WiFiDog %s\r\n"
                      "Host: %s\r\n"
                      "\r\n",
                      auth_server->authserv_path,
                      config_get_config()->gw_id,
-                     wifidog_cfg_version,
+                     configverison,
                      VERSION,
                      auth_server->authserv_hostname);
             debug(LOG_INFO, "conf request = %s", request);
@@ -205,8 +213,7 @@ check_config_version(const char *res, const t_auth_serv *auth_server)
             got_conf_value(res, "BlackMACList", blackmaclist, sizeof(blackmaclist));
             got_conf_value(res, "BlackIPList", blackiplist, sizeof(blackiplist));
             got_conf_value(res, "BlackWANHOSTList", blackwanhostlist, sizeof(blackwanhostlist));
-            write_config_file(trustedmaclist, trustediplist, trustedwanhostlist, blackmaclist, blackiplist, blackwanhostlist);
-            wifidog_cfg_version = atoi(conf_ver);
+            write_config_file(conf_ver, trustedmaclist, trustediplist, trustedwanhostlist, blackmaclist, blackiplist, blackwanhostlist);
         }
     }
 }
