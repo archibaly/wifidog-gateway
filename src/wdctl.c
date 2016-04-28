@@ -70,7 +70,6 @@ usage(void)
     fprintf(stdout, "  reset [mac|ip]    Reset the specified mac or ip connection\n");
     fprintf(stdout, "  status            Obtain the status of wifidog\n");
     fprintf(stdout, "  stop              Stop the running wifidog\n");
-    fprintf(stdout, "  restart           Re-start the running wifidog (without disconnecting active users!)\n");
     fprintf(stdout, "\n");
 }
 
@@ -133,8 +132,6 @@ parse_commandline(int argc, char **argv)
             exit(1);
         }
         config.param = strdup(*(argv + optind + 1));
-    } else if (strcmp(*(argv + optind), "restart") == 0) {
-        config.command = WDCTL_RESTART;
     } else {
         fprintf(stderr, "wdctl: Error: Invalid command \"%s\"\n", *(argv + optind));
         usage();
@@ -309,10 +306,6 @@ main(int argc, char **argv)
 
     case WDCTL_KILL:
         wdctl_reset();
-        break;
-
-    case WDCTL_RESTART:
-        wdctl_restart();
         break;
 
     default:
