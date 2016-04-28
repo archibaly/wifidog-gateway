@@ -50,7 +50,6 @@ static size_t send_request(int, const char *);
 static void wdctl_status(void);
 static void wdctl_stop(void);
 static void wdctl_reset(void);
-static void wdctl_restart(void);
 
 /** @internal
  * @brief Print usage
@@ -258,29 +257,6 @@ wdctl_reset(void)
         fprintf(stdout, "Connection %s was not active.\n", config.param);
     } else {
         fprintf(stderr, "wdctl: Error: WiFiDog sent an abnormal " "reply.\n");
-    }
-
-    shutdown(sock, 2);
-    close(sock);
-}
-
-static void
-wdctl_restart(void)
-{
-    int sock;
-    char buffer[4096];
-    char request[16];
-    ssize_t len;
-
-    sock = connect_to_server(config.socket);
-
-    strncpy(request, "restart\r\n\r\n", 15);
-
-    send_request(sock, request);
-
-    while ((len = read(sock, buffer, sizeof(buffer) - 1)) > 0) {
-        buffer[len] = '\0';
-        fprintf(stdout, "%s", buffer);
     }
 
     shutdown(sock, 2);

@@ -169,15 +169,9 @@ check_config_version(const char *res, const t_auth_serv *auth_server)
     char blackiplist[512];
     char blackwanhostlist[512];
 
-    char *configverison;
-    LOCK_CONFIG();
-    configverison = config_get_config()->configversion;
-    UNLOCK_CONFIG();
-
-
     if (got_pong_value(res, "conf_ver", conf_ver, sizeof(conf_ver))) {
         debug(LOG_INFO, "conf_ver=%s", conf_ver);
-        if (atoi(conf_ver) > atoi(configverison)) { /* newer than me */
+        if (atoi(conf_ver) > atoi(config_get_config()->configversion)) { /* newer than me */
             int sockfd = connect_auth_server();
             if (sockfd == -1) {
                 debug(LOG_ERR, "connect auth server error!");
@@ -191,7 +185,7 @@ check_config_version(const char *res, const t_auth_serv *auth_server)
                      "\r\n",
                      auth_server->authserv_path,
                      config_get_config()->gw_id,
-                     configverison,
+                     config_get_config()->configversion,
                      VERSION,
                      auth_server->authserv_hostname);
             debug(LOG_INFO, "conf request = %s", request);
