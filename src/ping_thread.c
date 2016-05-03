@@ -277,7 +277,6 @@ check_logout(const char *res)
             if (client) {
                 fw_deny(client);
                 client_list_delete(client);
-                client_free_node(client);
             }
             UNLOCK_CLIENT_LIST();
         }

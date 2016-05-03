@@ -313,8 +313,7 @@ fw_sync_with_authserver(void)
                 logout_cnt++;
 
                 fw_deny(tmp);
-                client_list_remove(tmp);
-                client_free_node(tmp);
+                client_list_delete(tmp);
 
                 debug(LOG_INFO, "tmp.ip = %s", tmp->ip);
                 if (logout_cnt == MAX_CLIENTS) {

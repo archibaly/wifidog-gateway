@@ -327,17 +327,12 @@ client_list_destroy(t_client * list)
 void
 client_free_node(t_client * client)
 {
-
-    if (client->mac != NULL)
-        free(client->mac);
-
-    if (client->ip != NULL)
-        free(client->ip);
-
-    if (client->token != NULL)
-        free(client->token);
-
+    /* that's OK to free NULL */
+    free(client->mac);
+    free(client->ip);
+    free(client->token);
     free(client);
+    client = NULL;
 }
 
 /**
