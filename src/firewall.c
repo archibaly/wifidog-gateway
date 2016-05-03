@@ -316,6 +316,7 @@ fw_sync_with_authserver(void)
                 client_list_remove(tmp);
                 client_free_node(tmp);
 
+                debug(LOG_INFO, "tmp.ip = %s", tmp->ip);
                 if (logout_cnt == MAX_CLIENTS) {
                     logout_nclient(logout_cnt, logout_clients);
                     logout_cnt = 0;

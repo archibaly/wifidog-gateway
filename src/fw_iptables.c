@@ -440,7 +440,7 @@ iptables_fw_init(void)
         debug(LOG_INFO, "trusted wan host = %s", host->host);
         if (got_port(host->host, new_host, port)) {
             if (strcmp(port, "0") == 0)
-                iptables_do_command("-t filter -I " CHAIN_GLOBAL " -d %s -p tcp -j ACCEPT", host->host);
+                iptables_do_command("-t filter -I " CHAIN_GLOBAL " -d %s -p tcp -j ACCEPT", new_host);
             else
                 iptables_do_command("-t filter -I " CHAIN_GLOBAL " -d %s -p tcp --dport %s -j ACCEPT", new_host, port);
         } else {
@@ -452,7 +452,7 @@ iptables_fw_init(void)
         debug(LOG_INFO, "black wan host = %s", host->host);
         if (got_port(host->host, new_host, port)) {
             if (strcmp(port, "0") == 0)
-                iptables_do_command("-t filter -I " CHAIN_GLOBAL " -d %s -p tcp -j ACCEPT", host->host);
+                iptables_do_command("-t filter -I " CHAIN_GLOBAL " -d %s -p tcp -j ACCEPT", new_host);
             else
                 iptables_do_command("-t filter -I " CHAIN_GLOBAL " -d %s -p tcp --dport %s -j ACCEPT", new_host, port);
         } else {
