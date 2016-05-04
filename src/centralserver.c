@@ -65,7 +65,8 @@
 */
 t_authcode
 auth_server_request(t_authresponse * authresponse, const char *request_type, const char *ip, const char *mac,
-                    const char *token, unsigned long long int incoming, unsigned long long int outgoing, unsigned long long int incoming_delta, unsigned long long int outgoing_delta)
+                    const char *token, unsigned long long int incoming, unsigned long long int outgoing,
+                    unsigned long long int incoming_delta, unsigned long long int outgoing_delta)
 {
     s_config *config = config_get_config();
     int sockfd;
@@ -80,7 +81,7 @@ auth_server_request(t_authresponse * authresponse, const char *request_type, con
 
     sockfd = connect_auth_server();
 
-        /**
+    /**
 	 * TODO: XXX change the PHP so we can harmonize stage as request_type
 	 * everywhere.
 	 */
@@ -187,7 +188,7 @@ auth_server_nrequest(t_authresponse * authresponse, const char *request_type, in
     char request[MAX_BUF];
     auth_server_build_request(request, sizeof(request) - 1, client_num, client);
     snprintf(buf, (sizeof(buf) - 1),
-             "GET %s%sstage=%s%s&gw_id=%s&version=%d HTTP/1.0\r\n"
+             "GET %s%sstage=%s%s&gw_id=%s&version=%s HTTP/1.0\r\n"
              "User-Agent: WiFiDog %s\r\n"
              "Host: %s\r\n"
              "\r\n",
@@ -195,7 +196,7 @@ auth_server_nrequest(t_authresponse * authresponse, const char *request_type, in
              auth_server->authserv_auth_script_path_fragment,
              request_type,
              request,
-             config->gw_id, wifidog_cfg_version, VERSION, auth_server->authserv_hostname);
+             config->gw_id, config_get_config()->configversion, VERSION, auth_server->authserv_hostname);
     debug(LOG_INFO, "auth_server_request = %s", buf);
 
     char *res;

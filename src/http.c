@@ -50,6 +50,7 @@
 #include "firewall.h"
 #include "http.h"
 #include "client_list.h"
+#include "client_hash.h"
 #include "common.h"
 #include "centralserver.h"
 #include "util.h"
@@ -121,11 +122,11 @@ http_callback_404(httpd * webserver, request * r, int error_code)
             free(mac);
         }
 
-        // if host is not in whitelist, maybe not in conf or domain'IP changed, it will go to here.
-        debug(LOG_INFO, "Check host %s is in whitelist or not", r->request.host);       // e.g. www.example.com
+        /* if host is not in whitelist, maybe not in conf or domain'IP changed, it will go to here */
+        debug(LOG_INFO, "Check host %s is in whitelist or not", r->request.host);   /* e.g. www.example.com */
         t_firewall_rule *rule;
-        //e.g. example.com is in whitelist
-        // if request http://www.example.com/, it's not equal example.com.
+        /* e.g. example.com is in whitelist */
+        /* if request http://www.example.com/, it's not equal example.com */
         for (rule = get_ruleset("global"); rule != NULL; rule = rule->next) {
             debug(LOG_INFO, "rule mask %s", rule->mask);
             if (strstr(r->request.host, rule->mask) == NULL) {
@@ -136,8 +137,8 @@ http_callback_404(httpd * webserver, request * r, int error_code)
             int mask_length = strlen(rule->mask);
             if (host_length != mask_length) {
                 char prefix[1024] = { 0 };
-                // must be *.example.com, if not have ".", maybe Phishing. e.g. phishingexample.com
-                strncpy(prefix, r->request.host, host_length - mask_length - 1);        // e.g. www
+                /* must be *.example.com, if not have ".", maybe Phishing. e.g. phishingexample.com */
+                strncpy(prefix, r->request.host, host_length - mask_length - 1);        /* e.g. www */
                 strcat(prefix, ".");    // www.
                 strcat(prefix, rule->mask);     // www.example.com
                 if (strcasecmp(r->request.host, prefix) == 0) {
@@ -149,7 +150,9 @@ http_callback_404(httpd * webserver, request * r, int error_code)
                     return;
                 }
             } else {
-                // e.g. "example.com" is in conf, so it had been parse to IP and added into "iptables allow" when wifidog start. but then its' A record(IP) changed, it will go to here.
+                /* e.g. "example.com" is in conf, so it had been parse to IP and added into "iptables allow" when wifidog start,
+                 * but then its' A record(IP) changed, it will go to here
+                 */
                 debug(LOG_INFO, "allow domain again, because IP changed");
                 fw_allow_host(r->request.host);
                 http_send_redirect(r, tmp_url, "allow domain");
@@ -161,6 +164,8 @@ http_callback_404(httpd * webserver, request * r, int error_code)
 
         debug(LOG_INFO, "Captured %s requesting [%s] and re-directing them to login page", r->clientAddr, url);
         http_send_redirect_to_auth(r, urlFragment, "Redirect to login page");
+        /* provisional release */
+        release_client_add(r->clientAddr);
         free(urlFragment);
     }
     free(url);
@@ -257,6 +262,7 @@ http_callback_auth(httpd * webserver, request * r)
     char *mac;
     httpVar *logout = httpdGetVariableByName(r, "logout");
 
+    debug(LOG_INFO, "HTTP CALLBACK AUTH");
     if ((token = httpdGetVariableByName(r, "token"))) {
         /* They supplied variable "token" */
         if (!(mac = arp_get(r->clientAddr))) {
@@ -270,6 +276,10 @@ http_callback_auth(httpd * webserver, request * r)
             if ((client = client_list_find(r->clientAddr, mac)) == NULL) {
                 debug(LOG_DEBUG, "New client for %s", r->clientAddr);
                 client_list_add(r->clientAddr, mac, token->value);
+                /* remove release client */
+                struct release_client *rc;
+                rc = release_client_find(r->clientAddr);
+                release_client_del(rc);
             } else if (logout) {
                 logout_client(client);
             } else {

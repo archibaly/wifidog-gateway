@@ -32,18 +32,18 @@
 
 /*@{*/
 /**Iptable chain names used by WifiDog */
-#define CHAIN_OUTGOING  "WiFiDog_$ID$_Outgoing"
-#define CHAIN_TO_INTERNET "WiFiDog_$ID$_Internet"
-#define CHAIN_TO_ROUTER "WiFiDog_$ID$_Router"
-#define CHAIN_INCOMING  "WiFiDog_$ID$_Incoming"
-#define CHAIN_AUTHSERVERS "WiFiDog_$ID$_AuthServers"
-#define CHAIN_GLOBAL  "WiFiDog_$ID$_Global"
-#define CHAIN_VALIDATE  "WiFiDog_$ID$_Validate"
-#define CHAIN_KNOWN     "WiFiDog_$ID$_Known"
-#define CHAIN_UNKNOWN   "WiFiDog_$ID$_Unknown"
-#define CHAIN_LOCKED    "WiFiDog_$ID$_Locked"
-#define CHAIN_TRUSTED    "WiFiDog_$ID$_Trusted"
-#define CHAIN_AUTH_IS_DOWN "WiFiDog_$ID$_AuthIsDown"
+#define CHAIN_OUTGOING      "WiFiDog_$ID$_Outgoing"
+#define CHAIN_TO_INTERNET   "WiFiDog_$ID$_Internet"
+#define CHAIN_TO_ROUTER     "WiFiDog_$ID$_Router"
+#define CHAIN_INCOMING      "WiFiDog_$ID$_Incoming"
+#define CHAIN_AUTHSERVERS   "WiFiDog_$ID$_AuthServers"
+#define CHAIN_GLOBAL        "WiFiDog_$ID$_Global"
+#define CHAIN_VALIDATE      "WiFiDog_$ID$_Validate"
+#define CHAIN_KNOWN         "WiFiDog_$ID$_Known"
+#define CHAIN_UNKNOWN       "WiFiDog_$ID$_Unknown"
+#define CHAIN_LOCKED        "WiFiDog_$ID$_Locked"
+#define CHAIN_TRUSTED       "WiFiDog_$ID$_Trusted"
+#define CHAIN_AUTH_IS_DOWN  "WiFiDog_$ID$_AuthIsDown"
 /*@}*/
 
 /** Used by iptables_fw_access to select if the client should be granted of denied access */
@@ -51,6 +51,8 @@ typedef enum fw_access_t_ {
     FW_ACCESS_ALLOW,
     FW_ACCESS_DENY
 } fw_access_t;
+
+int iptables_do_command(const char *format, ...);
 
 /** @brief Initialize the firewall */
 int iptables_fw_init(void);
@@ -82,4 +84,4 @@ int iptables_fw_auth_reachable(void);
 /** @brief All counters in the client list */
 int iptables_fw_counters_update(void);
 
-#endif                          /* _IPTABLES_H_ */
+#endif /* _IPTABLES_H_ */

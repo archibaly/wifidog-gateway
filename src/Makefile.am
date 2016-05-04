@@ -37,6 +37,7 @@ libgateway_a_SOURCES = commandline.c \
 	pstring.c \
 	str.c \
 	kmp.c \
+	client_hash.c \
 	wd_util.c
 
 noinst_HEADERS = commandline.h \
@@ -60,6 +61,7 @@ noinst_HEADERS = commandline.h \
 	pstring.h \
 	str.h \
 	kmp.h \
+	client_hash.h \
 	wd_util.h
 
 wdctl_LDADD = libgateway.a

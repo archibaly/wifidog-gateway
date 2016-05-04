@@ -90,8 +90,7 @@ thread_ping(void *arg)
     }
 }
 
-int
-got_pong_value(const char *str, const char *key, char *value, int size)
+int got_pong_value(const char *str, const char *key, char *value, int size)
 {
     int i;
     int offset = 0;
@@ -118,7 +117,7 @@ int got_conf_value(const char *str, const char *key, char *value, int size)
 {
     int i;
     int offset = 0;
-    char tmp[512];
+    char tmp[1024];
     char key_tmp[64];
     snprintf(key_tmp, sizeof(key_tmp) - 1, "%s", key);
 
@@ -129,6 +128,7 @@ int got_conf_value(const char *str, const char *key, char *value, int size)
         offset = offset + i + 1;
         if (strstr(tmp, key_tmp)) {
             strncpy(value, tmp + strlen(key_tmp), size - 1);
+            debug(LOG_INFO, "%s = %s", key, value);
             trim(value);
             return 1;
         }
@@ -162,12 +162,12 @@ check_config_version(const char *res, const t_auth_serv *auth_server)
 {
     char conf_ver[16];
     char request[MAX_BUF];
-    char trustedmaclist[512];
-    char trustediplist[512];
-    char trustedwanhostlist[512];
-    char blackmaclist[512];
-    char blackiplist[512];
-    char blackwanhostlist[512];
+    char trustedmaclist[1024];
+    char trustediplist[1024];
+    char trustedwanhostlist[1024];
+    char blackmaclist[1024];
+    char blackiplist[1024];
+    char blackwanhostlist[1024];
 
     if (got_pong_value(res, "conf_ver", conf_ver, sizeof(conf_ver))) {
         debug(LOG_INFO, "conf_ver=%s", conf_ver);
@@ -352,7 +352,7 @@ ping(void)
      * Prep & send request
      */
     snprintf(request, sizeof(request) - 1,
-             "GET %s%sgw_id=%s&sys_uptime=%lu&sys_memfree=%u&sys_load=%.2f&wifidog_uptime=%lu&version=%d HTTP/1.0\r\n"
+             "GET %s%sgw_id=%s&sys_uptime=%lu&sys_memfree=%u&sys_load=%.2f&wifidog_uptime=%lu&version=%s HTTP/1.0\r\n"
              "User-Agent: WiFiDog %s\r\n"
              "Host: %s\r\n"
              "\r\n",
@@ -363,7 +363,7 @@ ping(void)
              sys_memfree,
              sys_load,
              (long unsigned int)((long unsigned int)time(NULL) - (long unsigned int)started_time),
-             wifidog_cfg_version,
+             config_get_config()->configversion,
              VERSION, auth_server->authserv_hostname);
     debug(LOG_INFO, "ping request = %s", request);
     char *res;

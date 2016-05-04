@@ -31,10 +31,10 @@
 #define MAX_BUF	4096
 /** @brief Max clients request one time */
 #define MAX_CLIENTS	4
+/** @brief Provisional release timeout */
+#define RELEASE_TIMEOUT	60
 
-extern int wifidog_cfg_version;
-
-/* for my own purpose */
+/* for batch reporting */
 struct client {
     char ip[16];
     char mac[20];

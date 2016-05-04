@@ -55,6 +55,7 @@
 #include "auth.h"
 #include "http.h"
 #include "client_list.h"
+#include "client_hash.h"
 #include "wdctl_thread.h"
 #include "ping_thread.h"
 #include "httpd_thread.h"
@@ -66,6 +67,7 @@
  */
 static pthread_t tid_fw_counter = 0;
 static pthread_t tid_ping = 0;
+static pthread_t tid_release_counter = 0;
 
 time_t started_time = 0;
 
@@ -287,6 +289,10 @@ termination_handler(int s)
         debug(LOG_INFO, "Explicitly killing the ping thread");
         pthread_kill(tid_ping, SIGKILL);
     }
+    if (tid_release_counter && self != tid_release_counter) {
+        debug(LOG_INFO, "Explicitly killing the periodic thread");
+        pthread_kill(tid_release_counter, SIGKILL);
+    }
 
     debug(LOG_NOTICE, "Exiting...");
     exit(s == 0 ? 1 : 0);
@@ -342,6 +348,31 @@ init_signals(void)
     if (sigaction(SIGINT, &sa, NULL) == -1) {
         debug(LOG_ERR, "sigaction(): %s", strerror(errno));
         exit(1);
+    }
+}
+
+void thread_release_client_timeout_check(const void *arg)
+{
+    pthread_cond_t cond = PTHREAD_COND_INITIALIZER;
+    pthread_mutex_t cond_mutex = PTHREAD_MUTEX_INITIALIZER;
+    struct timespec timeout;
+
+    for (;;) {
+        /* Sleep for one second... */
+        timeout.tv_sec = time(NULL) + RELEASE_TIMEOUT;
+        timeout.tv_nsec = 0;
+
+        /* Mutex must be locked for pthread_cond_timedwait... */
+        pthread_mutex_lock(&cond_mutex);
+
+        /* Thread safe "sleep" */
+        pthread_cond_timedwait(&cond, &cond_mutex, &timeout);
+
+        /* No longer needs to be locked */
+        pthread_mutex_unlock(&cond_mutex);
+
+        debug(LOG_INFO, "Running release_client_timeout()");
+        release_client_timeout();
     }
 }
 
@@ -440,6 +471,14 @@ main_loop(void)
         termination_handler(0);
     }
     pthread_detach(tid_ping);
+
+    /* Start periodic thread */
+    result = pthread_create(&tid_release_counter, NULL, (void *)thread_release_client_timeout_check, NULL);
+    if (result != 0) {
+        debug(LOG_ERR, "FATAL: Failed to create a new thread (periodic) - exiting");
+        termination_handler(0);
+    }
+    pthread_detach(tid_release_counter);
 
     debug(LOG_NOTICE, "Waiting for connections");
     while (1) {

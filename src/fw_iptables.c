@@ -49,7 +49,7 @@
 #include "util.h"
 #include "client_list.h"
 
-static int iptables_do_command(const char *format, ...);
+int iptables_do_command(const char *format, ...);
 static char *iptables_compile(const char *, const char *, const t_firewall_rule *);
 static void iptables_load_ruleset(const char *, const char *, const char *);
 
@@ -88,7 +88,7 @@ iptables_insert_gateway_id(char **input)
 
 /** @internal 
  * */
-static int
+int
 iptables_do_command(const char *format, ...)
 {
     va_list vlist;
@@ -241,18 +241,20 @@ iptables_fw_set_authservers(void)
 
 /*
  * @host: www.pronetway.com:80
- * @new_host: www.pronetway.com
+ *        121.98.0.11:80
+ * @new : www.pronetway.com
+ *        121.98.0.11
  * @port: 80
  */
 static int
-got_port(const char *host, char *new_host, char *port)
+got_port(const char *host, char *new, char *port)
 {
     int i;
     int len = strlen(host);
     for (i = 0; i < len; i++) {
         if (host[i] == ':') {
-            strncpy(new_host, host, i);
-            new_host[i] = '\0';
+            strncpy(new, host, i);
+            new[i] = '\0';
             strcpy(port, host + i + 1);
             return 1;
         }
@@ -311,9 +313,6 @@ iptables_fw_init(void)
 
     for (mac = config->trustedmaclist; mac != NULL; mac = mac->next)
         iptables_do_command("-t mangle -A " CHAIN_TRUSTED " -m mac --mac-source %s -j MARK --set-mark %d", mac->mac, FW_MARK_KNOWN);
-
-    for (ip = config->trustediplist; ip != NULL; ip = ip->next)
-        iptables_do_command("-t mangle -A " CHAIN_TRUSTED " -s %s -j MARK --set-mark %d", ip->ip, FW_MARK_KNOWN);
 
     /*
      *
@@ -428,21 +427,40 @@ iptables_fw_init(void)
         iptables_do_command("-t filter -I FORWARD -m mac --mac-source %s -j DROP", mac->mac);
     }
 
-    for (ip = config->blackiplist; ip != NULL; ip = ip->next) {
-        debug(LOG_INFO, "black ip = %s", ip->ip);
-        iptables_do_command("-t filter -I INPUT -s %s -j DROP", ip->ip);
-        iptables_do_command("-t filter -I FORWARD -s %s -j DROP", ip->ip);
+    char new[64];
+    char port[6];
+
+    for (ip = config->trustediplist; ip != NULL; ip = ip->next) {
+        debug(LOG_INFO, "trusted wan ip = %s", ip->ip);
+        if (got_port(ip->ip, new, port)) {
+            if (strcmp(port, "0") == 0)
+                iptables_do_command("-t filter -I " CHAIN_GLOBAL " -d %s -p tcp -j ACCEPT", new);
+            else
+                iptables_do_command("-t filter -I " CHAIN_GLOBAL " -d %s -p tcp --dport %s -j ACCEPT", new, port);
+        } else {
+            iptables_do_command("-t filter -I " CHAIN_GLOBAL " -d %s -p tcp -j ACCEPT", ip->ip);
+        }
     }
 
-    char new_host[64];
-    char port[6];
+    for (ip = config->blackiplist; ip != NULL; ip = ip->next) {
+        debug(LOG_INFO, "black wan ip = %s", ip->ip);
+        if (got_port(ip->ip, new, port)) {
+            if (strcmp(port, "0") == 0)
+                iptables_do_command("-t filter -I " CHAIN_GLOBAL " -d %s -p tcp -j REJECT", new);
+            else
+                iptables_do_command("-t filter -I " CHAIN_GLOBAL " -d %s -p tcp --dport %s -j REJECT", new, port);
+        } else {
+            iptables_do_command("-t filter -I " CHAIN_GLOBAL " -d %s -p tcp -j REJECT", ip->ip);
+        }
+    }
+
     for (host = config->trustedwanhostlist; host != NULL; host = host->next) {
         debug(LOG_INFO, "trusted wan host = %s", host->host);
-        if (got_port(host->host, new_host, port)) {
+        if (got_port(host->host, new, port)) {
             if (strcmp(port, "0") == 0)
-                iptables_do_command("-t filter -I " CHAIN_GLOBAL " -d %s -p tcp -j ACCEPT", new_host);
+                iptables_do_command("-t filter -I " CHAIN_GLOBAL " -d %s -p tcp -j ACCEPT", new);
             else
-                iptables_do_command("-t filter -I " CHAIN_GLOBAL " -d %s -p tcp --dport %s -j ACCEPT", new_host, port);
+                iptables_do_command("-t filter -I " CHAIN_GLOBAL " -d %s -p tcp --dport %s -j ACCEPT", new, port);
         } else {
             iptables_do_command("-t filter -I " CHAIN_GLOBAL " -d %s -p tcp -j ACCEPT", host->host);
         }
@@ -450,11 +468,11 @@ iptables_fw_init(void)
 
     for (host = config->blackwanhostlist; host != NULL; host = host->next) {
         debug(LOG_INFO, "black wan host = %s", host->host);
-        if (got_port(host->host, new_host, port)) {
+        if (got_port(host->host, new, port)) {
             if (strcmp(port, "0") == 0)
-                iptables_do_command("-t filter -I " CHAIN_GLOBAL " -d %s -p tcp -j ACCEPT", new_host);
+                iptables_do_command("-t filter -I " CHAIN_GLOBAL " -d %s -p tcp -j REJECT", new);
             else
-                iptables_do_command("-t filter -I " CHAIN_GLOBAL " -d %s -p tcp --dport %s -j ACCEPT", new_host, port);
+                iptables_do_command("-t filter -I " CHAIN_GLOBAL " -d %s -p tcp --dport %s -j REJECT", new, port);
         } else {
             iptables_do_command("-t filter -I " CHAIN_GLOBAL " -d %s -p tcp -j REJECT", host->host);
         }
@@ -475,7 +493,6 @@ iptables_fw_destroy(void)
 {
     const s_config *config;
     t_trusted_or_black_mac *mac;
-    t_trusted_or_black_ip *ip;
     int got_authdown_ruleset = NULL == get_ruleset(FWRULESET_AUTH_IS_DOWN) ? 0 : 1;
     fw_quiet = 1;
 
@@ -559,11 +576,6 @@ iptables_fw_destroy(void)
         debug(LOG_INFO, "black mac = %s", mac->mac);
         iptables_do_command("-t filter -D INPUT -m mac --mac-source %s -j DROP", mac->mac);
         iptables_do_command("-t filter -D FORWARD -m mac --mac-source %s -j DROP", mac->mac);
-    }
-    for (ip = config->blackiplist; ip != NULL; ip = ip->next) {
-        debug(LOG_INFO, "black ip = %s", ip->ip);
-        iptables_do_command("-t filter -D INPUT -s %s -j DROP", ip->ip);
-        iptables_do_command("-t filter -D FORWARD -s %s -j DROP", ip->ip);
     }
     UNLOCK_CONFIG();
 

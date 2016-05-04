@@ -60,8 +60,6 @@
 
 static int _fw_deny_raw(const char *, const char *, const int);
 
-int wifidog_cfg_version = 1;
-
 /**
  * Allow a client access through the firewall by adding a rule in the firewall to MARK the user's packets with the proper
  * rule by providing his IP and MAC address
