@@ -55,6 +55,7 @@
 #include "centralserver.h"
 #include "util.h"
 #include "wd_util.h"
+#include "str.h"
 
 #include "../config.h"
 
@@ -164,8 +165,6 @@ http_callback_404(httpd * webserver, request * r, int error_code)
 
         debug(LOG_INFO, "Captured %s requesting [%s] and re-directing them to login page", r->clientAddr, url);
         http_send_redirect_to_auth(r, urlFragment, "Redirect to login page");
-        /* provisional release */
-        release_client_add(r->clientAddr);
         free(urlFragment);
     }
     free(url);
@@ -175,6 +174,17 @@ void
 http_callback_wifidog(httpd * webserver, request * r)
 {
     send_http_page(r, "WiFiDog", "Please use the menu to navigate the features of this WiFiDog installation.");
+}
+
+void http_callback_access(httpd *webserver, request *r)
+{
+    debug(LOG_INFO, "HTTP CALLBACK ACCESS");
+    httpVar *timeout = httpdGetVariableByName(r, "timeout");
+    httpVar *token = httpdGetVariableByName(r, "token");
+
+    if (!release_client_find(r->clientAddr))
+        release_client_add(r->clientAddr, token->value, atoi(timeout->value));
+    httpdOutput(r, "OK");
 }
 
 void
@@ -262,8 +272,8 @@ http_callback_auth(httpd * webserver, request * r)
     char *mac;
     httpVar *logout = httpdGetVariableByName(r, "logout");
 
-    debug(LOG_INFO, "HTTP CALLBACK AUTH");
     if ((token = httpdGetVariableByName(r, "token"))) {
+        debug(LOG_INFO, "token = %s", token->value);
         /* They supplied variable "token" */
         if (!(mac = arp_get(r->clientAddr))) {
             /* We could not get their MAC address */
@@ -276,10 +286,6 @@ http_callback_auth(httpd * webserver, request * r)
             if ((client = client_list_find(r->clientAddr, mac)) == NULL) {
                 debug(LOG_DEBUG, "New client for %s", r->clientAddr);
                 client_list_add(r->clientAddr, mac, token->value);
-                /* remove release client */
-                struct release_client *rc;
-                rc = release_client_find(r->clientAddr);
-                release_client_del(rc);
             } else if (logout) {
                 logout_client(client);
             } else {

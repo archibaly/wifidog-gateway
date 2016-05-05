@@ -27,6 +27,8 @@
 #ifndef _DEBUG_H_
 #define _DEBUG_H_
 
+#include <syslog.h>
+
 typedef struct _debug_conf {
     int debuglevel;      /**< @brief Debug information verbosity */
     int log_stderr;      /**< @brief Output log to stdout */

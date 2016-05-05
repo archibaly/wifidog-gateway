@@ -359,7 +359,7 @@ void thread_release_client_timeout_check(const void *arg)
 
     for (;;) {
         /* Sleep for one second... */
-        timeout.tv_sec = time(NULL) + RELEASE_TIMEOUT;
+        timeout.tv_sec = time(NULL) + config_get_config()->checkinterval;
         timeout.tv_nsec = 0;
 
         /* Mutex must be locked for pthread_cond_timedwait... */
@@ -432,6 +432,7 @@ main_loop(void)
 
     debug(LOG_DEBUG, "Assigning callbacks to web server");
     httpdAddCContent(webserver, "/", "wifidog", 0, NULL, http_callback_wifidog);
+    httpdAddCContent(webserver, "/", "access", 0, NULL, http_callback_access);
     httpdAddCContent(webserver, "/wifidog", "", 0, NULL, http_callback_wifidog);
     httpdAddCContent(webserver, "/wifidog", "about", 0, NULL, http_callback_about);
     httpdAddCContent(webserver, "/wifidog", "status", 0, NULL, http_callback_status);
@@ -472,7 +473,7 @@ main_loop(void)
     }
     pthread_detach(tid_ping);
 
-    /* Start periodic thread */
+    /* Start release client timeout thread */
     result = pthread_create(&tid_release_counter, NULL, (void *)thread_release_client_timeout_check, NULL);
     if (result != 0) {
         debug(LOG_ERR, "FATAL: Failed to create a new thread (periodic) - exiting");

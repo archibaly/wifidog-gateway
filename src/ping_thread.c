@@ -59,10 +59,11 @@
 
 static void ping(void);
 
-/** Launches a thread that periodically checks in with the wifidog auth server to perform heartbeat function.
-@param arg NULL
-@todo This thread loops infinitely, need a watchdog to verify that it is still running?
-*/
+/**
+ * Launches a thread that periodically checks in with the wifidog auth server to perform heartbeat function.
+ * @param arg NULL
+ * @todo This thread loops infinitely, need a watchdog to verify that it is still running?
+ */
 void
 thread_ping(void *arg)
 {

@@ -26,7 +26,6 @@
 
 #include <stdio.h>
 #include <errno.h>
-#include <syslog.h>
 #include <stdarg.h>
 #include <time.h>
 #include <unistd.h>

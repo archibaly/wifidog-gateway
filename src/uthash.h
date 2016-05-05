@@ -80,26 +80,26 @@ typedef unsigned char uint8_t;
 #define UTHASH_VERSION 1.9.9
 
 #ifndef uthash_fatal
-#define uthash_fatal(msg) exit(-1)	/* fatal error (out of memory,etc) */
+#define uthash_fatal(msg) exit(-1)			/* fatal error (out of memory,etc) */
 #endif
 #ifndef uthash_malloc
-#define uthash_malloc(sz) malloc(sz)	/* malloc fcn                      */
+#define uthash_malloc(sz) malloc(sz)		/* malloc fcn                      */
 #endif
 #ifndef uthash_free
-#define uthash_free(ptr,sz) free(ptr)	/* free fcn                        */
+#define uthash_free(ptr,sz) free(ptr)		/* free fcn                        */
 #endif
 
 #ifndef uthash_noexpand_fyi
-#define uthash_noexpand_fyi(tbl)	/* can be defined to log noexpand  */
+#define uthash_noexpand_fyi(tbl)			/* can be defined to log noexpand  */
 #endif
 #ifndef uthash_expand_fyi
-#define uthash_expand_fyi(tbl)	/* can be defined to log expands   */
+#define uthash_expand_fyi(tbl)				/* can be defined to log expands   */
 #endif
 
 /* initial number of buckets */
-#define HASH_INITIAL_NUM_BUCKETS 32U	/* initial number of buckets        */
+#define HASH_INITIAL_NUM_BUCKETS 32U		/* initial number of buckets        */
 #define HASH_INITIAL_NUM_BUCKETS_LOG2 5U	/* lg2 of initial number of buckets */
-#define HASH_BKT_CAPACITY_THRESH 10U	/* expand when bucket count reaches */
+#define HASH_BKT_CAPACITY_THRESH 10U		/* expand when bucket count reaches */
 
 /* calculate the element whose hash handle address is hhe */
 #define ELMT_FROM_HH(tbl,hhp) ((void*)(((char*)(hhp)) - ((tbl)->hho)))
@@ -124,7 +124,7 @@ do {                                                                            
 do {                                                                             \
   (tbl)->bloom_nbits = HASH_BLOOM;                                               \
   (tbl)->bloom_bv = (uint8_t*)uthash_malloc(HASH_BLOOM_BYTELEN);                 \
-  if (!((tbl)->bloom_bv))  { uthash_fatal( "out of memory"); }                   \
+  if (!((tbl)->bloom_bv))  { uthash_fatal("out of memory"); }                   \
   memset((tbl)->bloom_bv, 0, HASH_BLOOM_BYTELEN);                                \
   (tbl)->bloom_sig = HASH_BLOOM_SIGNATURE;                                       \
 } while (0)
@@ -554,10 +554,10 @@ do {                                                                            
 #define MUR_TWO_TWO(p)   ((((*WP(p))&0xffff0000) >>16) | (((*(WP(p)+1))&0x0000ffff) << 16))
 #define MUR_ONE_THREE(p) ((((*WP(p))&0xff000000) >>24) | (((*(WP(p)+1))&0x00ffffff) <<  8))
 #endif
-#define MUR_GETBLOCK(p,i) (MUR_PLUS0_ALIGNED(p) ? ((p)[i]) :           \
-                            (MUR_PLUS1_ALIGNED(p) ? MUR_THREE_ONE(p) : \
-                             (MUR_PLUS2_ALIGNED(p) ? MUR_TWO_TWO(p) :  \
-                                                      MUR_ONE_THREE(p))))
+#define MUR_GETBLOCK(p,i) (MUR_PLUS0_ALIGNED(p) ? ((p)[i]) :         \
+                          (MUR_PLUS1_ALIGNED(p) ? MUR_THREE_ONE(p) : \
+                          (MUR_PLUS2_ALIGNED(p) ? MUR_TWO_TWO(p) :   \
+                                                  MUR_ONE_THREE(p))))
 #endif
 #define MUR_ROTL32(x,r) (((x) << (r)) | ((x) >> (32 - (r))))
 #define MUR_FMIX(_h) \

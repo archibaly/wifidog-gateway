@@ -66,6 +66,9 @@ thread_httpd(void *args)
 		debug(LOG_DEBUG, "Calling httpdProcessRequest() for %s", r->clientAddr);
 		httpdProcessRequest(webserver, r);
 		debug(LOG_DEBUG, "Returned from httpdProcessRequest() for %s", r->clientAddr);
+		debug(LOG_INFO, "http request.path = %s", r->request.path);
+		debug(LOG_INFO, "http request.query = %s", r->request.query);
+		debug(LOG_INFO, "http request.host = %s", r->request.host);
 	}
 	else {
 		debug(LOG_DEBUG, "No valid request received from %s", r->clientAddr);

@@ -53,16 +53,17 @@
 
 #include "simple_http.h"
 
-/** Initiates a transaction with the auth server, either to authenticate or to
+/**
+ * Initiates a transaction with the auth server, either to authenticate or to
  * update the traffic counters at the server
-@param authresponse Returns the information given by the central server 
-@param request_type Use the REQUEST_TYPE_* defines in centralserver.h
-@param ip IP adress of the client this request is related to
-@param mac MAC adress of the client this request is related to
-@param token Authentification token of the client
-@param incoming Current counter of the client's total incoming traffic, in bytes 
-@param outgoing Current counter of the client's total outgoing traffic, in bytes 
-*/
+ * @param authresponse Returns the information given by the central server 
+ * @param request_type Use the REQUEST_TYPE_* defines in centralserver.h
+ * @param ip IP adress of the client this request is related to
+ * @param mac MAC adress of the client this request is related to
+ * @param token Authentification token of the client
+ * @param incoming Current counter of the client's total incoming traffic, in bytes 
+ * @param outgoing Current counter of the client's total outgoing traffic, in bytes 
+ */
 t_authcode
 auth_server_request(t_authresponse * authresponse, const char *request_type, const char *ip, const char *mac,
                     const char *token, unsigned long long int incoming, unsigned long long int outgoing,

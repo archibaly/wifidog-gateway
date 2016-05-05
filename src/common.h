@@ -31,8 +31,6 @@
 #define MAX_BUF	4096
 /** @brief Max clients request one time */
 #define MAX_CLIENTS	4
-/** @brief Provisional release timeout */
-#define RELEASE_TIMEOUT	60
 
 /* for batch reporting */
 struct client {

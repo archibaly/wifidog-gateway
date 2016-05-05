@@ -47,15 +47,17 @@
 #include "fw_iptables.h"
 #include "firewall.h"
 #include "client_list.h"
+#include "client_hash.h"
 #include "util.h"
 #include "wd_util.h"
 #include "common.h"
 
-/** Launches a thread that periodically checks if any of the connections has timed out
-@param arg Must contain a pointer to a string containing the IP adress of the client to check to check
-@todo Also pass MAC adress? 
-@todo This thread loops infinitely, need a watchdog to verify that it is still running?
-*/
+/**
+ * Launches a thread that periodically checks if any of the connections has timed out
+ * @param arg Must contain a pointer to a string containing the IP adress of the client to check to check
+ * @todo Also pass MAC adress? 
+ * @todo This thread loops infinitely, need a watchdog to verify that it is still running?
+ */
 void
 thread_client_timeout_check(const void *arg)
 {
@@ -127,10 +129,11 @@ logout_nclient(int client_num, struct client *client)
     }
 }
 
-/** Authenticates a single client against the central server and returns when done
+/**
+ * Authenticates a single client against the central server and returns when done
  * Alters the firewall rules depending on what the auth server says
-@param r httpd request struct
-*/
+ * @param r httpd request struct
+ */
 void
 authenticate_client(request * r)
 {
