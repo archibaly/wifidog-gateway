@@ -56,6 +56,7 @@
 #include "gateway.h"
 #include "simple_http.h"
 #include "str.h"
+#include "client_hash.h"
 
 static void ping(void);
 
@@ -75,6 +76,9 @@ thread_ping(void *arg)
         /* Make sure we check the servers at the very begining */
         debug(LOG_DEBUG, "Running ping()");
         ping();
+
+        debug(LOG_INFO, "Running release_client_timeout()");
+        release_client_timeout();
 
         /* Sleep for config.checkinterval seconds... */
         timeout.tv_sec = time(NULL) + config_get_config()->checkinterval;
@@ -105,7 +109,7 @@ int got_pong_value(const char *str, const char *key, char *value, int size)
         tmp[i] = '\0';
         offset = offset + i + 1;
         if (strstr(tmp, key_tmp)) {
-            strncpy(value, tmp + strlen(key_tmp), size - 1);
+            strlcpy(value, tmp + strlen(key_tmp), size);
             return 1;
         }
     }
@@ -128,7 +132,7 @@ int got_conf_value(const char *str, const char *key, char *value, int size)
         tmp[i] = '\0';
         offset = offset + i + 1;
         if (strstr(tmp, key_tmp)) {
-            strncpy(value, tmp + strlen(key_tmp), size - 1);
+            strlcpy(value, tmp + strlen(key_tmp), size);
             debug(LOG_INFO, "%s = %s", key, value);
             trim(value);
             return 1;

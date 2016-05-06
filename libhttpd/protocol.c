@@ -428,8 +428,7 @@ int createFlag;
     char buffer[HTTP_MAX_URL], *curDir;
     httpDir *curItem, *curChild;
 
-    strncpy(buffer, dir, HTTP_MAX_URL);
-    buffer[HTTP_MAX_URL - 1] = 0;
+    strlcpy(buffer, dir, HTTP_MAX_URL);
     curItem = server->content;
 
 	char *pbuffer = buffer;

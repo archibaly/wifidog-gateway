@@ -152,7 +152,7 @@ connect_to_server(const char *sock_name)
     }
     memset(&sa_un, 0, sizeof(sa_un));
     sa_un.sun_family = AF_UNIX;
-    strncpy(sa_un.sun_path, sock_name, (sizeof(sa_un.sun_path) - 1));
+    strlcpy(sa_un.sun_path, sock_name, sizeof(sa_un.sun_path));
 
     if (connect(sock, (struct sockaddr *)&sa_un, strlen(sa_un.sun_path) + sizeof(sa_un.sun_family))) {
         fprintf(stderr, "wdctl: wifidog probably not started (Error: %s)\n", strerror(errno));
@@ -191,7 +191,7 @@ wdctl_status(void)
 
     sock = connect_to_server(config.socket);
 
-    strncpy(request, "status\r\n\r\n", 15);
+    strlcpy(request, "status\r\n\r\n", sizeof(request));
 
     send_request(sock, request);
 
@@ -215,7 +215,7 @@ wdctl_stop(void)
 
     sock = connect_to_server(config.socket);
 
-    strncpy(request, "stop\r\n\r\n", 15);
+    strlcpy(request, "stop\r\n\r\n", sizeof(request));
 
     send_request(sock, request);
 
@@ -239,9 +239,9 @@ wdctl_reset(void)
 
     sock = connect_to_server(config.socket);
 
-    strncpy(request, "reset ", 64);
-    strncat(request, config.param, (64 - strlen(request) - 1));
-    strncat(request, "\r\n\r\n", (64 - strlen(request) - 1));
+    strlcpy(request, "reset ", sizeof(request));
+    strncat(request, config.param, (sizeof(request) - strlen(request) - 1));
+    strncat(request, "\r\n\r\n", (sizeof(request) - strlen(request) - 1));
 
     send_request(sock, request);
 

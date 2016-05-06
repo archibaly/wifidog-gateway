@@ -184,7 +184,8 @@ void http_callback_access(httpd *webserver, request *r)
 
     if (!release_client_find(r->clientAddr))
         release_client_add(r->clientAddr, token->value, atoi(timeout->value));
-    httpdOutput(r, "OK");
+
+    httpdOutput(r, "{\"success\":true}");
 }
 
 void
