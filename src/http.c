@@ -66,15 +66,14 @@ static int wireless_get(const char *key, char *value, size_t size)
     int pos;
     FILE *fp;
 	char buff[256];
-	char temp[256];
 
-    fp = fopen("/etc/config/wireless", "r");
-    if (fp == NULL)
+    if (!(fp = fopen("/etc/config/wireless", "r")))
         return -1;
-    snprintf(temp, sizeof(temp), "option %s", key);
     while (fgets(buff, sizeof(buff), fp) != NULL) {
-        if ((pos = kmp(buff, temp)) >= 0) {
-            pos += strlen(temp);
+        if ((pos = kmp(buff, key)) < 0)
+            continue;
+        if (isblank(buff[pos-1]) && isblank(buff[pos+strlen(key)])) {
+            pos += strlen(key);
             while (isblank(buff[pos]) || buff[pos] == '\'')
                 pos++;
             strlcpy(value, buff + pos, size);
