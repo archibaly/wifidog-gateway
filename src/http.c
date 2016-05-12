@@ -40,6 +40,7 @@
 #include <sys/stat.h>
 #include <fcntl.h>
 #include <errno.h>
+#include <ctype.h>
 
 #include "httpd.h"
 
@@ -56,9 +57,37 @@
 #include "util.h"
 #include "wd_util.h"
 #include "str.h"
+#include "kmp.h"
 
 #include "../config.h"
 
+static int wireless_get(const char *key, char *value, size_t size)
+{
+    int pos;
+    FILE *fp;
+	char buff[256];
+	char temp[256];
+
+    fp = fopen("/etc/config/wireless", "r");
+    if (fp == NULL)
+        return -1;
+    snprintf(temp, sizeof(temp), "option %s", key);
+    while (fgets(buff, sizeof(buff), fp) != NULL) {
+        if ((pos = kmp(buff, temp)) >= 0) {
+            pos += strlen(temp);
+            while (isblank(buff[pos]) || buff[pos] == '\'')
+                pos++;
+            strlcpy(value, buff + pos, size);
+            if (value[strlen(value) - 2] == '\'')
+                value[strlen(value) - 2] = '\0';    /* delete '\'' */
+            else
+                value[strlen(value) - 1] = '\0';    /* delete '\n' */
+            return 0;
+        }
+    }
+    fclose(fp);
+	return -1;
+}
 
 /** The 404 handler is also responsible for redirecting to the auth server */
 void
@@ -107,19 +136,22 @@ http_callback_404(httpd * webserver, request * r, int error_code)
     } else {
         /* Re-direct them to auth server */
         char *urlFragment;
+        char ssid[64] = "";
+
+        wireless_get("ssid", ssid, sizeof(ssid));
 
         if (!(mac = arp_get(r->clientAddr))) {
             /* We could not get their MAC address */
             debug(LOG_INFO, "Failed to retrieve MAC address for ip %s, so not putting in the login request",
                   r->clientAddr);
-            safe_asprintf(&urlFragment, "%sgw_address=%s&gw_port=%d&gw_id=%s&ip=%s&url=%s",
+            safe_asprintf(&urlFragment, "%sgw_address=%s&gw_port=%d&gw_id=%s&ip=%s&url=%s&ssid=%s",
                           auth_server->authserv_login_script_path_fragment, config->gw_address, config->gw_port,
-                          config->gw_id, r->clientAddr, url);
+                          config->gw_id, r->clientAddr, url, ssid);
         } else {
             debug(LOG_INFO, "Got client MAC address for ip %s: %s", r->clientAddr, mac);
-            safe_asprintf(&urlFragment, "%sgw_address=%s&gw_port=%d&gw_id=%s&ip=%s&mac=%s&url=%s",
+            safe_asprintf(&urlFragment, "%sgw_address=%s&gw_port=%d&gw_id=%s&ip=%s&mac=%s&url=%s&ssid=%s",
                           auth_server->authserv_login_script_path_fragment,
-                          config->gw_address, config->gw_port, config->gw_id, r->clientAddr, mac, url);
+                          config->gw_address, config->gw_port, config->gw_id, r->clientAddr, mac, url, ssid);
             free(mac);
         }
 
