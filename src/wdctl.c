@@ -37,7 +37,9 @@
 #include <unistd.h>
 #include <syslog.h>
 #include <errno.h>
+#include <signal.h>
 
+#include "pid.h"
 #include "wdctl.h"
 
 static s_config config;
@@ -271,24 +273,14 @@ wdctl_reset(void)
 static void
 wdctl_restart(void)
 {
-    int sock;
-    char buffer[4096];
-    char request[16];
-    ssize_t len;
-
-    sock = connect_to_server(config.socket);
-
-    strlcpy(request, "restart\r\n\r\n", sizeof(request));
-
-    send_request(sock, request);
-
-    while ((len = read(sock, buffer, sizeof(buffer) - 1)) > 0) {
-        buffer[len] = '\0';
-        fprintf(stdout, "%s", buffer);
-    }
-
-    shutdown(sock, 2);
-    close(sock);
+	pid_t pid;
+	if (find_pid_by_name("wifidog", &pid, 1) > 0) {
+		kill(pid, SIGTERM);
+        while (kill(pid, 0) != -1) {
+            sleep(1);
+		}
+		system("wifidog");
+	}
 }
 
 int
