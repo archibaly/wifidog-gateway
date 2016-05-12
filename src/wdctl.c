@@ -50,6 +50,7 @@ static size_t send_request(int, const char *);
 static void wdctl_status(void);
 static void wdctl_stop(void);
 static void wdctl_reset(void);
+static void wdctl_restart(void);
 
 /** @internal
  * @brief Print usage
@@ -69,6 +70,7 @@ usage(void)
     fprintf(stdout, "  reset [mac|ip]    Reset the specified mac or ip connection\n");
     fprintf(stdout, "  status            Obtain the status of wifidog\n");
     fprintf(stdout, "  stop              Stop the running wifidog\n");
+    fprintf(stdout, "  restart           Re-start the running wifidog (without disconnecting active users!)\n");
     fprintf(stdout, "\n");
 }
 
@@ -79,6 +81,7 @@ usage(void)
 static void
 init_config(void)
 {
+
     config.socket = strdup(DEFAULT_SOCK);
     config.command = WDCTL_UNDEF;
 }
@@ -131,6 +134,8 @@ parse_commandline(int argc, char **argv)
             exit(1);
         }
         config.param = strdup(*(argv + optind + 1));
+    } else if (strcmp(*(argv + optind), "restart") == 0) {
+        config.command = WDCTL_RESTART;
     } else {
         fprintf(stderr, "wdctl: Error: Invalid command \"%s\"\n", *(argv + optind));
         usage();
@@ -263,6 +268,29 @@ wdctl_reset(void)
     close(sock);
 }
 
+static void
+wdctl_restart(void)
+{
+    int sock;
+    char buffer[4096];
+    char request[16];
+    ssize_t len;
+
+    sock = connect_to_server(config.socket);
+
+    strlcpy(request, "restart\r\n\r\n", sizeof(request));
+
+    send_request(sock, request);
+
+    while ((len = read(sock, buffer, sizeof(buffer) - 1)) > 0) {
+        buffer[len] = '\0';
+        fprintf(stdout, "%s", buffer);
+    }
+
+    shutdown(sock, 2);
+    close(sock);
+}
+
 int
 main(int argc, char **argv)
 {
@@ -282,6 +310,10 @@ main(int argc, char **argv)
 
     case WDCTL_KILL:
         wdctl_reset();
+        break;
+
+    case WDCTL_RESTART:
+        wdctl_restart();
         break;
 
     default:

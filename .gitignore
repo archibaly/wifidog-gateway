@@ -8,6 +8,7 @@
 .deps
 .libs
 src/wdctl
+src/wdrst
 src/wifidog
 bin/
 
@@ -32,5 +33,12 @@ libtool
 src/Makefile
 src/Makefile.in
 stamp-h1
-wifidog-msg.html
 wifidog.spec
+run/libhttpd.so.0.0.0
+run/wdctl
+run/wdrst
+run/wifidog
+run/wifidog.conf
+run/wifidog.run
+run/wifidog.tgz
+run/wifidog-msg.html

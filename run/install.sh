@@ -1,6 +1,6 @@
 #!/bin/sh
 
-LINES=19
+LINES=24
 TAR_EXE=/tmp/wifidog.tgz
 
 ok=`cat /etc/rc.local | grep wifidog`
@@ -10,9 +10,14 @@ fi
 
 tail -n +$LINES $0 > $TAR_EXE
 
-tar -zxvf $TAR_EXE -C /bin
+tar -zxvf $TAR_EXE -C /bin > /dev/null
 mv /bin/wifidog.conf /etc
+mv /bin/wifidog-msg.html /etc
 rm -f $TAR_EXE
-wifidog
+
+mv /bin/libhttpd.so.0.0.0 /lib
+cd /lib
+ln -sf libhttpd.so.0.0.0 libhttpd.so.0
+ln -sf libhttpd.so.0 libhttpd.so
 
 exit 0
