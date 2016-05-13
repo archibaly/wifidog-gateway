@@ -475,12 +475,12 @@ main_loop(void)
             *params = webserver;
             *(params + 1) = r;
 
+            /* thread_httpd() may be executed before pthread_create() return */
             result = pthread_create(&tid, NULL, (void *)thread_httpd, (void *)params);
             if (result != 0) {
                 debug(LOG_ERR, "FATAL: Failed to create a new thread (httpd) - exiting");
                 termination_handler(0);
             }
-            pthread_detach(tid);
         } else {
             /* webserver->lastError should be 2 */
             /* XXX We failed an ACL.... No handling because

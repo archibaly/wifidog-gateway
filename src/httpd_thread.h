@@ -28,6 +28,6 @@
 #define _HTTPD_THREAD_H_
 
 /** @brief Handle a web request */
-void thread_httpd(void *args);
+void *thread_httpd(void *args);
 
 #endif

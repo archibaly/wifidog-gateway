@@ -46,13 +46,14 @@
 /** Main request handling thread.
 @param args Two item array of void-cast pointers to the httpd and request struct
 */
-void
-thread_httpd(void *args)
+void *thread_httpd(void *args)
 {
 	void	**params;
 	httpd	*webserver;
 	request	*r;
-	
+
+	pthread_detach(pthread_self());
+
 	params = (void **)args;
 	webserver = *params;
 	r = *(params + 1);
@@ -64,4 +65,6 @@ thread_httpd(void *args)
 	}
 	debug(LOG_INFO, "Closing connection with %s", r->clientAddr);
 	httpdEndRequest(r);
+
+	pthread_exit(NULL);
 }
