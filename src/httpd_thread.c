@@ -59,20 +59,9 @@ thread_httpd(void *args)
 	free(params); /* XXX We must release this ourselves. */
 	
 	if (httpdReadRequest(webserver, r) == 0) {
-		/*
-		 * We read the request fine
-		 */
-		debug(LOG_DEBUG, "Processing request from %s", r->clientAddr);
-		debug(LOG_DEBUG, "Calling httpdProcessRequest() for %s", r->clientAddr);
+		/* We read the request fine */
 		httpdProcessRequest(webserver, r);
-		debug(LOG_DEBUG, "Returned from httpdProcessRequest() for %s", r->clientAddr);
-		debug(LOG_INFO, "http request.path = %s", r->request.path);
-		debug(LOG_INFO, "http request.query = %s", r->request.query);
-		debug(LOG_INFO, "http request.host = %s", r->request.host);
 	}
-	else {
-		debug(LOG_DEBUG, "No valid request received from %s", r->clientAddr);
-	}
-	debug(LOG_DEBUG, "Closing connection with %s", r->clientAddr);
+	debug(LOG_INFO, "Closing connection with %s", r->clientAddr);
 	httpdEndRequest(r);
 }
