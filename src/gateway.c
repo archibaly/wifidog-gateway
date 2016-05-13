@@ -356,7 +356,6 @@ main_loop(void)
     pthread_t tid;
     s_config *config = config_get_config();
     request *r;
-    void **params;
 
     /* Set the time when wifidog started */
     if (!started_time) {
@@ -463,24 +462,14 @@ main_loop(void)
             debug(LOG_ERR, "FATAL: httpdGetConnection returned unexpected value %d, exiting.", webserver->lastError);
             termination_handler(0);
         } else if (r != NULL) {
-            /*
-             * We got a connection
-             *
-             * We should create another thread
-             */
-            debug(LOG_INFO, "Received connection from %s, spawning worker thread", r->clientAddr);
-            /* The void**'s are a simulation of the normal C
-             * function calling sequence. */
-            params = safe_malloc(2 * sizeof(void *));
-            *params = webserver;
-            *(params + 1) = r;
-
-            /* thread_httpd() may be executed before pthread_create() return */
-            result = pthread_create(&tid, NULL, (void *)thread_httpd, (void *)params);
-            if (result != 0) {
-                debug(LOG_ERR, "FATAL: Failed to create a new thread (httpd) - exiting");
-                termination_handler(0);
+            /* We got a connection */
+            debug(LOG_INFO, "Received connection from %s", r->clientAddr);
+            if (httpdReadRequest(webserver, r) == 0) {
+                /* We read the request fine */
+                httpdProcessRequest(webserver, r);
             }
+            debug(LOG_INFO, "Closing connection with %s", r->clientAddr);
+            httpdEndRequest(r);
         } else {
             /* webserver->lastError should be 2 */
             /* XXX We failed an ACL.... No handling because
