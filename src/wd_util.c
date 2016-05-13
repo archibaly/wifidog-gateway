@@ -153,9 +153,9 @@ is_auth_online()
     }
 }
 
-        /*
-         * @return A string containing human-readable status text. MUST BE free()d by caller
-         */
+/*
+ * @return A string containing human-readable status text. MUST BE free()d by caller
+ */
 char *
 get_status_text()
 {
@@ -219,6 +219,8 @@ get_status_text()
 
     t_trusted_or_black_mac *mac;
     t_trusted_or_black_ip *ip;
+    t_trusted_or_black_wan_host *host;
+
     if (config->trustedmaclist != NULL) {
         pstr_cat(pstr, "\nTrusted MAC addresses:\n");
         for (mac = config->trustedmaclist; mac != NULL; mac = mac->next)
@@ -229,6 +231,11 @@ get_status_text()
         pstr_cat(pstr, "\nTrusted IP:\n");
         for (ip = config->trustediplist; ip != NULL; ip = ip->next)
             pstr_append_sprintf(pstr, "  %s\n", ip->ip);
+    }
+    if (config->trustedwanhostlist != NULL) {
+        pstr_cat(pstr, "\nTrusted WAN host:\n");
+        for (host = config->trustedwanhostlist; host != NULL; host = host->next)
+            pstr_append_sprintf(pstr, "  %s\n", host->host);
     }
 
     if (config->blackmaclist != NULL) {
@@ -241,6 +248,12 @@ get_status_text()
         pstr_cat(pstr, "\nBlack IP:\n");
         for (ip = config->blackiplist; ip != NULL; ip = ip->next)
             pstr_append_sprintf(pstr, "  %s\n", ip->ip);
+    }
+
+    if (config->blackwanhostlist != NULL) {
+        pstr_cat(pstr, "\nBlack WAN host:\n");
+        for (host = config->blackwanhostlist; host != NULL; host = host->next)
+            pstr_append_sprintf(pstr, "  %s\n", host->host);
     }
 
     pstr_cat(pstr, "\nAuthentication servers:\n");

@@ -25,6 +25,7 @@
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <time.h>
+#include <errno.h>
 
 #if defined(_WIN32)
 #include <winsock2.h>
@@ -47,6 +48,7 @@
 #else
 #include <varargs.h>
 #endif
+#include "../src/debug.h"
 
 char *
 httpdUrlEncode(str)
@@ -311,47 +313,48 @@ struct timeval *timeout;
     socklen_t addrLen;
     char *ipaddr;
     request *r;
+
     /* Reset error */
     server->lastError = 0;
+
     FD_ZERO(&fds);
     FD_SET(server->serverSock, &fds);
-    result = 0;
-    while (result == 0) {
-        result = select(server->serverSock + 1, &fds, 0, 0, timeout);
-        if (result < 0) {
-            server->lastError = -1;
-            return (NULL);
-        }
-        if (timeout != 0 && result == 0) {
-            server->lastError = 0;
-            return (NULL);
-        }
-        if (result > 0) {
-            break;
-        }
+
+    result = select(server->serverSock + 1, &fds, 0, 0, timeout);
+    if (result < 0) {
+        server->lastError = -1;
+        return NULL;
+    } else if (result == 0) {
+        return NULL;
+    } else {
+        if (!FD_ISSET(server->serverSock, &fds))
+            return NULL;
     }
+
     /* Allocate request struct */
     r = (request *) malloc(sizeof(request));
     if (r == NULL) {
         server->lastError = -3;
-        return (NULL);
+        return NULL;
     }
     memset((void *)r, 0, sizeof(request));
     /* Get on with it */
     bzero(&addr, sizeof(addr));
     addrLen = sizeof(addr);
     r->clientSock = accept(server->serverSock, (struct sockaddr *)&addr, &addrLen);
+    if (r->clientSock < 0) {
+        debug(LOG_INFO, "accept error: %s", strerror(errno));
+        return NULL;
+    }
     ipaddr = inet_ntoa(addr.sin_addr);
-    if (ipaddr) {
+    if (ipaddr)
         strlcpy(r->clientAddr, ipaddr, HTTP_IP_ADDR_LEN);
-    } else
+    else
         *r->clientAddr = 0;
     r->readBufRemain = 0;
     r->readBufPtr = NULL;
 
-    /*
-     ** Check the default ACL
-     */
+    /* Check the default ACL */
     if (server->defaultAcl) {
         if (httpdCheckAcl(server, r, server->defaultAcl)
             == HTTP_ACL_DENY) {
@@ -360,7 +363,7 @@ struct timeval *timeout;
             return (NULL);
         }
     }
-    return (r);
+    return r;
 }
 
 int
