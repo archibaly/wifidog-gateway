@@ -61,4 +61,7 @@ void icmp_ping(const char *);
 /** @brief Save pid of this wifidog in pid file */
 void save_pid_file(const char *);
 
+/** @brief Get wireless parameters */
+int wireless_get(const char *key, char *value, size_t size);
+
 #endif                          /* _UTIL_H_ */

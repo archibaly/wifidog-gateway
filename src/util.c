@@ -30,6 +30,7 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <ctype.h>
 #include <syslog.h>
 #include <errno.h>
 #include <pthread.h>
@@ -54,6 +55,7 @@
 
 #include "common.h"
 #include "safe.h"
+#include "kmp.h"
 #include "util.h"
 #include "debug.h"
 #include "pstring.h"
@@ -410,4 +412,31 @@ save_pid_file(const char *pf)
     }
 
     return;
+}
+
+int wireless_get(const char *key, char *value, size_t size)
+{
+    int pos;
+    FILE *fp;
+	char buff[256];
+
+    if (!(fp = fopen("/etc/config/wireless", "r")))
+        return -1;
+    while (fgets(buff, sizeof(buff), fp) != NULL) {
+        if ((pos = kmp(buff, key)) < 0)
+            continue;
+        if (isblank(buff[pos-1]) && isblank(buff[pos+strlen(key)])) {
+            pos += strlen(key);
+            while (isblank(buff[pos]) || buff[pos] == '\'')
+                pos++;
+            strlcpy(value, buff + pos, size);
+            if (value[strlen(value) - 2] == '\'')
+                value[strlen(value) - 2] = '\0';    /* delete '\'' */
+            else
+                value[strlen(value) - 1] = '\0';    /* delete '\n' */
+            return 0;
+        }
+    }
+    fclose(fp);
+	return -1;
 }

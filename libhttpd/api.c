@@ -325,9 +325,8 @@ struct timeval *timeout;
         server->lastError = -1;
         return NULL;
     }
-    if (result == 0) {
+    if (result == 0)
         return NULL;
-    }
 
     if (FD_ISSET(server->serverSock, &fds)) {
         /* Allocate request struct */
@@ -343,6 +342,7 @@ struct timeval *timeout;
         r->clientSock = accept(server->serverSock, (struct sockaddr *)&addr, &addrLen);
         if (r->clientSock < 0) {
             debug(LOG_INFO, "accept error: %s", strerror(errno));
+            free(r);
             return NULL;
         }
         ipaddr = inet_ntoa(addr.sin_addr);

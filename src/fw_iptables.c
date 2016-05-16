@@ -48,6 +48,7 @@
 #include "debug.h"
 #include "util.h"
 #include "client_list.h"
+#include "popen.h"
 
 int iptables_do_command(const char *format, ...);
 static char *iptables_compile(const char *, const char *, const t_firewall_rule *);
@@ -733,6 +734,7 @@ iptables_fw_counters_update(void)
     free(script);
     if (!output) {
         debug(LOG_ERR, "popen(): %s", strerror(errno));
+        execute("wdctl stop", 1);
         return -1;
     }
 

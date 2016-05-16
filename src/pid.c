@@ -13,7 +13,7 @@
  * @pid  : array for pid
  * @size : the size of array
  */
-int find_pid_by_name(const char* pname, pid_t *pid, int size)
+int find_pid_by_name(const char *pname, pid_t *pid, int size)
 {
 	DIR *dir;
 	struct dirent *next;

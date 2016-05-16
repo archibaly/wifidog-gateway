@@ -58,7 +58,6 @@
 #include "client_list.h"
 #include "wdctl_thread.h"
 #include "ping_thread.h"
-#include "httpd_thread.h"
 #include "util.h"
 
 /** XXX Ugly hack 

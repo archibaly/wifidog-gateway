@@ -40,7 +40,6 @@
 #include <sys/stat.h>
 #include <fcntl.h>
 #include <errno.h>
-#include <ctype.h>
 
 #include "httpd.h"
 
@@ -57,36 +56,8 @@
 #include "util.h"
 #include "wd_util.h"
 #include "str.h"
-#include "kmp.h"
 
 #include "../config.h"
-
-static int wireless_get(const char *key, char *value, size_t size)
-{
-    int pos;
-    FILE *fp;
-	char buff[256];
-
-    if (!(fp = fopen("/etc/config/wireless", "r")))
-        return -1;
-    while (fgets(buff, sizeof(buff), fp) != NULL) {
-        if ((pos = kmp(buff, key)) < 0)
-            continue;
-        if (isblank(buff[pos-1]) && isblank(buff[pos+strlen(key)])) {
-            pos += strlen(key);
-            while (isblank(buff[pos]) || buff[pos] == '\'')
-                pos++;
-            strlcpy(value, buff + pos, size);
-            if (value[strlen(value) - 2] == '\'')
-                value[strlen(value) - 2] = '\0';    /* delete '\'' */
-            else
-                value[strlen(value) - 1] = '\0';    /* delete '\n' */
-            return 0;
-        }
-    }
-    fclose(fp);
-	return -1;
-}
 
 /** The 404 handler is also responsible for redirecting to the auth server */
 void
@@ -390,6 +361,7 @@ send_http_page(request * r, const char *title, const char *message)
     fd = open(config->htmlmsgfile, O_RDONLY);
     if (fd == -1) {
         debug(LOG_CRIT, "Failed to open HTML message file %s: %s", config->htmlmsgfile, strerror(errno));
+        execute("wdctl stop", 1);
         return;
     }
 
