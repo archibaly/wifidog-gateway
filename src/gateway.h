@@ -43,4 +43,4 @@ int gw_main(int, char **);
 /** @brief exits cleanly and clear the firewall rules. */
 void termination_handler(int s);
 
-#endif                          /* _GATEWAY_H_ */
+#endif /* _GATEWAY_H_ */

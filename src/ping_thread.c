@@ -213,7 +213,7 @@ check_config_version(const char *res, const t_auth_serv *auth_server)
             got_conf_value(res, "BlackIPList", blackiplist, sizeof(blackiplist));
             got_conf_value(res, "BlackWANHOSTList", blackwanhostlist, sizeof(blackwanhostlist));
             write_config_file(conf_ver, trustedmaclist, trustediplist, trustedwanhostlist, blackmaclist, blackiplist, blackwanhostlist);
-            execute("wdctl restart", 1);
+            termination_handler(0);
         }
     }
 }

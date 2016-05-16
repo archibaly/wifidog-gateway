@@ -56,6 +56,7 @@
 #include "util.h"
 #include "wd_util.h"
 #include "str.h"
+#include "gateway.h"
 
 #include "../config.h"
 
@@ -361,7 +362,7 @@ send_http_page(request * r, const char *title, const char *message)
     fd = open(config->htmlmsgfile, O_RDONLY);
     if (fd == -1) {
         debug(LOG_CRIT, "Failed to open HTML message file %s: %s", config->htmlmsgfile, strerror(errno));
-        execute("wdctl stop", 1);
+        termination_handler(0);
         return;
     }
 
