@@ -72,5 +72,5 @@ wdctl_LDADD = libgateway.a
 
 wdctl_SOURCES = wdctl.c
 
-prodaemon_LDADD = pid.o
+prodaemon_LDADD = pid.o debug.o
 prodaemon_SOURCES = prodaemon.c
