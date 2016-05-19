@@ -192,7 +192,7 @@ thread_wdctl_handler(void *arg)
 
     if (!done) {
         debug(LOG_ERR, "Invalid wdctl request.");
-        shutdown(fd, 2);
+        shutdown(fd, SHUT_RDWR);
         close(fd);
         pthread_exit(NULL);
     }
@@ -211,7 +211,7 @@ thread_wdctl_handler(void *arg)
         debug(LOG_ERR, "Request was not understood!");
     }
 
-    shutdown(fd, 2);
+    shutdown(fd, SHUT_RDWR);
     close(fd);
     debug(LOG_DEBUG, "Exiting thread_wdctl_handler....");
 
@@ -329,7 +329,7 @@ wdctl_restart(int afd)
 
         debug(LOG_INFO, "Sent all existing clients to child.  Committing suicide!");
 
-        shutdown(afd, 2);
+        shutdown(afd, SHUT_RDWR);
         close(afd);
 
         /* Our job in life is done. Commit suicide! */
@@ -339,7 +339,7 @@ wdctl_restart(int afd)
         close(wdctl_socket_server);
         close(sock);
         close_icmp_socket();
-        shutdown(afd, 2);
+        shutdown(afd, SHUT_RDWR);
         close(afd);
         debug(LOG_INFO, "Re-executing myself (%s)", restartargv[0]);
         setsid();

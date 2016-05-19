@@ -96,8 +96,7 @@ http_get(const int sockfd, const char *req)
         nfds = select(nfds, &readfds, NULL, NULL, &timeout);
 
         if (nfds > 0) {
-                        /** We don't have to use FD_ISSET() because there
-			 *  was only one fd. */
+            /* We don't have to use FD_ISSET() because there was only one fd. */
             memset(readbuf, 0, MAX_BUF);
             numbytes = read(sockfd, readbuf, MAX_BUF - 1);
             if (numbytes < 0) {

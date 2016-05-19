@@ -208,7 +208,7 @@ wdctl_status(void)
         fprintf(stdout, "%s", buffer);
     }
 
-    shutdown(sock, 2);
+    shutdown(sock, SHUT_RDWR);
     close(sock);
 }
 
@@ -231,7 +231,7 @@ wdctl_stop(void)
         fprintf(stdout, "%s", buffer);
     }
 
-    shutdown(sock, 2);
+    shutdown(sock, SHUT_RDWR);
     close(sock);
 }
 
@@ -266,7 +266,7 @@ wdctl_reset(void)
         fprintf(stderr, "wdctl: Error: WiFiDog sent an abnormal " "reply.\n");
     }
 
-    shutdown(sock, 2);
+    shutdown(sock, SHUT_RDWR);
     close(sock);
 }
 

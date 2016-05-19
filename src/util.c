@@ -434,6 +434,7 @@ int wireless_get(const char *key, char *value, size_t size)
                 value[strlen(value) - 2] = '\0';    /* delete '\'' */
             else
                 value[strlen(value) - 1] = '\0';    /* delete '\n' */
+            fclose(fp);
             return 0;
         }
     }

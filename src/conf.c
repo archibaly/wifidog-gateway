@@ -1424,7 +1424,6 @@ config_notnull(const void *parm, const char *parmname)
 t_auth_serv *
 get_auth_server(void)
 {
-
     /* This is as good as atomic */
     return config.auth_servers;
 }

@@ -328,43 +328,40 @@ struct timeval *timeout;
     if (result == 0)
         return NULL;
 
-    if (FD_ISSET(server->serverSock, &fds)) {
-        /* Allocate request struct */
-        r = (request *)malloc(sizeof(request));
-        if (r == NULL) {
-            server->lastError = -3;
-            return NULL;
-        }
-        memset((void *)r, 0, sizeof(request));
-        /* Get on with it */
-        bzero(&addr, sizeof(addr));
-        addrLen = sizeof(addr);
-        r->clientSock = accept(server->serverSock, (struct sockaddr *)&addr, &addrLen);
-        if (r->clientSock < 0) {
-            debug(LOG_INFO, "accept error: %s", strerror(errno));
-            free(r);
-            return NULL;
-        }
-        ipaddr = inet_ntoa(addr.sin_addr);
-        if (ipaddr)
-            strlcpy(r->clientAddr, ipaddr, HTTP_IP_ADDR_LEN);
-        else
-            *r->clientAddr = 0;
-        r->readBufRemain = 0;
-        r->readBufPtr = NULL;
-
-        /* Check the default ACL */
-        if (server->defaultAcl) {
-            if (httpdCheckAcl(server, r, server->defaultAcl) == HTTP_ACL_DENY) {
-                httpdEndRequest(r);
-                server->lastError = 2;
-                return (NULL);
-            }
-        }
-        return r;
+    /* We don't have to use FD_ISSET() because there was only one fd. */
+    /* Allocate request struct */
+    r = (request *)malloc(sizeof(request));
+    if (r == NULL) {
+        server->lastError = -3;
+        return NULL;
     }
+    memset((void *)r, 0, sizeof(request));
+    /* Get on with it */
+    bzero(&addr, sizeof(addr));
+    addrLen = sizeof(addr);
+    r->clientSock = accept(server->serverSock, (struct sockaddr *)&addr, &addrLen);
+    if (r->clientSock < 0) {
+        debug(LOG_ERR, "accept error: %s", strerror(errno));
+        free(r);
+        return NULL;
+    }
+    ipaddr = inet_ntoa(addr.sin_addr);
+    if (ipaddr)
+        strlcpy(r->clientAddr, ipaddr, HTTP_IP_ADDR_LEN);
+    else
+        *r->clientAddr = 0;
+    r->readBufRemain = 0;
+    r->readBufPtr = NULL;
 
-    return NULL;
+    /* Check the default ACL */
+    if (server->defaultAcl) {
+        if (httpdCheckAcl(server, r, server->defaultAcl) == HTTP_ACL_DENY) {
+            httpdEndRequest(r);
+            server->lastError = 2;
+            return NULL;
+        }
+    }
+    return r;
 }
 
 int
@@ -490,7 +487,7 @@ void
 httpdEndRequest(request * r)
 {
     _httpd_freeVariables(r->variables);
-    shutdown(r->clientSock, 2);
+    shutdown(r->clientSock, SHUT_RDWR);
     close(r->clientSock);
     free(r);
 }
