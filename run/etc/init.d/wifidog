@@ -1,0 +1,15 @@
+#!/bin/sh /etc/rc.common
+
+START=99
+
+start() {
+	wifidog
+}
+
+stop() {
+	wdctl stop
+}
+
+reload() {
+	wdctl restart
+}

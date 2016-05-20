@@ -5,8 +5,7 @@
 noinst_LIBRARIES = libgateway.a
 
 bin_PROGRAMS = wifidog \
-	wdctl \
-	prodaemon
+	wdctl
  
 AM_CPPFLAGS = \
 	-I${top_srcdir}/libhttpd/ \
@@ -71,6 +70,3 @@ noinst_HEADERS = commandline.h \
 wdctl_LDADD = libgateway.a
 
 wdctl_SOURCES = wdctl.c
-
-prodaemon_LDADD = pid.o debug.o
-prodaemon_SOURCES = prodaemon.c
