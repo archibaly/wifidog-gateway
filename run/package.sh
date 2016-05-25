@@ -13,3 +13,4 @@ tar zcvf wifidog.tgz bin etc lib
 cat install.sh wifidog.tgz > wifidog.run
 
 chmod +x wifidog.run
+cp wifidog.run wifidog-1.2.run
