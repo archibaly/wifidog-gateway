@@ -1,5 +1,7 @@
 #!/bin/sh
 
+RUN=wifidog-20160606.1.run
+
 cp ../bin/wdctl bin
 cp ../bin/wifidog bin
 cp ../wifidog.conf etc
@@ -10,7 +12,6 @@ mips-openwrt-linux-strip bin/*
 mips-openwrt-linux-strip lib/libhttpd.so.0.0.0
 
 tar zcvf wifidog.tgz bin etc lib
-cat install.sh wifidog.tgz > wifidog.run
+cat install.sh wifidog.tgz > $RUN
 
-chmod +x wifidog.run
-cp wifidog.run wifidog-1.2.run
+chmod +x $RUN

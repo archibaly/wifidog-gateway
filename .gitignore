@@ -34,3 +34,7 @@ src/Makefile
 src/Makefile.in
 stamp-h1
 wifidog.spec
+run/bin/wdctl
+run/bin/wifidog
+run/*.run
+run/wifidog.tgz

@@ -37,9 +37,7 @@
 #include <unistd.h>
 #include <syslog.h>
 #include <errno.h>
-#include <signal.h>
 
-#include "pid.h"
 #include "wdctl.h"
 
 static s_config config;
@@ -159,7 +157,7 @@ connect_to_server(const char *sock_name)
     }
     memset(&sa_un, 0, sizeof(sa_un));
     sa_un.sun_family = AF_UNIX;
-    strlcpy(sa_un.sun_path, sock_name, sizeof(sa_un.sun_path));
+    strncpy(sa_un.sun_path, sock_name, (sizeof(sa_un.sun_path) - 1));
 
     if (connect(sock, (struct sockaddr *)&sa_un, strlen(sa_un.sun_path) + sizeof(sa_un.sun_family))) {
         fprintf(stderr, "wdctl: wifidog probably not started (Error: %s)\n", strerror(errno));
@@ -198,7 +196,7 @@ wdctl_status(void)
 
     sock = connect_to_server(config.socket);
 
-    strlcpy(request, "status\r\n\r\n", sizeof(request));
+    strncpy(request, "status\r\n\r\n", 15);
 
     send_request(sock, request);
 
@@ -208,7 +206,7 @@ wdctl_status(void)
         fprintf(stdout, "%s", buffer);
     }
 
-    shutdown(sock, SHUT_RDWR);
+    shutdown(sock, 2);
     close(sock);
 }
 
@@ -222,7 +220,7 @@ wdctl_stop(void)
 
     sock = connect_to_server(config.socket);
 
-    strlcpy(request, "stop\r\n\r\n", sizeof(request));
+    strncpy(request, "stop\r\n\r\n", 15);
 
     send_request(sock, request);
 
@@ -231,7 +229,7 @@ wdctl_stop(void)
         fprintf(stdout, "%s", buffer);
     }
 
-    shutdown(sock, SHUT_RDWR);
+    shutdown(sock, 2);
     close(sock);
 }
 
@@ -246,9 +244,9 @@ wdctl_reset(void)
 
     sock = connect_to_server(config.socket);
 
-    strlcpy(request, "reset ", sizeof(request));
-    strncat(request, config.param, (sizeof(request) - strlen(request) - 1));
-    strncat(request, "\r\n\r\n", (sizeof(request) - strlen(request) - 1));
+    strncpy(request, "reset ", 64);
+    strncat(request, config.param, (64 - strlen(request) - 1));
+    strncat(request, "\r\n\r\n", (64 - strlen(request) - 1));
 
     send_request(sock, request);
 
@@ -266,21 +264,31 @@ wdctl_reset(void)
         fprintf(stderr, "wdctl: Error: WiFiDog sent an abnormal " "reply.\n");
     }
 
-    shutdown(sock, SHUT_RDWR);
+    shutdown(sock, 2);
     close(sock);
 }
 
 static void
 wdctl_restart(void)
 {
-	pid_t pid;
-	if (find_pid_by_name("wifidog", &pid, 1) > 0) {
-		kill(pid, SIGTERM);
-        while (kill(pid, 0) != -1) {
-            sleep(1);
-		}
-		system("wifidog");
-	}
+    int sock;
+    char buffer[4096];
+    char request[16];
+    ssize_t len;
+
+    sock = connect_to_server(config.socket);
+
+    strncpy(request, "restart\r\n\r\n", 15);
+
+    send_request(sock, request);
+
+    while ((len = read(sock, buffer, sizeof(buffer) - 1)) > 0) {
+        buffer[len] = '\0';
+        fprintf(stdout, "%s", buffer);
+    }
+
+    shutdown(sock, 2);
+    close(sock);
 }
 
 int

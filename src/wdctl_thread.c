@@ -55,6 +55,7 @@
 #include "gateway.h"
 #include "safe.h"
 
+
 static int create_unix_socket(const char *);
 static int write_to_socket(int, char *, size_t);
 static void *thread_wdctl_handler(void *);
@@ -79,7 +80,7 @@ create_unix_socket(const char *sock_name)
         return -1;
     }
 
-    sock = socket(AF_UNIX, SOCK_STREAM, 0);
+    sock = socket(PF_UNIX, SOCK_STREAM, 0);
 
     if (sock < 0) {
         debug(LOG_DEBUG, "Could not get unix socket: %s", strerror(errno));
@@ -125,10 +126,10 @@ thread_wdctl(void *arg)
     pthread_t tid;
     socklen_t len;
 
-    debug(LOG_INFO, "Starting wdctl.");
+    debug(LOG_DEBUG, "Starting wdctl.");
 
     sock_name = (char *)arg;
-    debug(LOG_INFO, "Socket name: %s", sock_name);
+    debug(LOG_DEBUG, "Socket name: %s", sock_name);
 
     debug(LOG_DEBUG, "Creating socket");
     wdctl_socket_server = create_unix_socket(sock_name);
@@ -192,12 +193,12 @@ thread_wdctl_handler(void *arg)
 
     if (!done) {
         debug(LOG_ERR, "Invalid wdctl request.");
-        shutdown(fd, SHUT_RDWR);
+        shutdown(fd, 2);
         close(fd);
         pthread_exit(NULL);
     }
 
-    debug(LOG_INFO, "Request received: [%s]", request);
+    debug(LOG_DEBUG, "Request received: [%s]", request);
 
     if (strncmp(request, "status", 6) == 0) {
         wdctl_status(fd);
@@ -211,7 +212,7 @@ thread_wdctl_handler(void *arg)
         debug(LOG_ERR, "Request was not understood!");
     }
 
-    shutdown(fd, SHUT_RDWR);
+    shutdown(fd, 2);
     close(fd);
     debug(LOG_DEBUG, "Exiting thread_wdctl_handler....");
 
@@ -276,13 +277,13 @@ wdctl_restart(int afd)
 
     conf = config_get_config();
 
-    debug(LOG_INFO, "Will restart myself");
+    debug(LOG_NOTICE, "Will restart myself");
 
     /* First, prepare the internal socket */
     sock_name = conf->internal_sock;
     debug(LOG_DEBUG, "Socket name: %s", sock_name);
 
-    debug(LOG_INFO, "Creating socket");
+    debug(LOG_DEBUG, "Creating socket");
     sock = create_unix_socket(sock_name);
     if (-1 == sock) {
         return;
@@ -291,13 +292,13 @@ wdctl_restart(int afd)
     /*
      * The internal socket is ready, fork and exec ourselves
      */
-    debug(LOG_INFO, "Forking in preparation for exec()...");
+    debug(LOG_DEBUG, "Forking in preparation for exec()...");
     pid = safe_fork();
     if (pid > 0) {
         /* Parent */
 
         /* Wait for the child to connect to our socket : */
-        debug(LOG_INFO, "Waiting for child to connect on internal socket");
+        debug(LOG_DEBUG, "Waiting for child to connect on internal socket");
         len = sizeof(sa_un);
         if ((fd = accept(sock, (struct sockaddr *)&sa_un, &len)) == -1) {
             debug(LOG_ERR, "Accept failed on internal socket: %s", strerror(errno));
@@ -307,7 +308,7 @@ wdctl_restart(int afd)
 
         close(sock);
 
-        debug(LOG_INFO, "Received connection from child.  Sending them all existing clients");
+        debug(LOG_DEBUG, "Received connection from child.  Sending them all existing clients");
 
         /* The child is connected. Send them over the socket the existing clients */
         LOCK_CLIENT_LIST();
@@ -329,7 +330,7 @@ wdctl_restart(int afd)
 
         debug(LOG_INFO, "Sent all existing clients to child.  Committing suicide!");
 
-        shutdown(afd, SHUT_RDWR);
+        shutdown(afd, 2);
         close(afd);
 
         /* Our job in life is done. Commit suicide! */
@@ -339,9 +340,9 @@ wdctl_restart(int afd)
         close(wdctl_socket_server);
         close(sock);
         close_icmp_socket();
-        shutdown(afd, SHUT_RDWR);
+        shutdown(afd, 2);
         close(afd);
-        debug(LOG_INFO, "Re-executing myself (%s)", restartargv[0]);
+        debug(LOG_NOTICE, "Re-executing myself (%s)", restartargv[0]);
         setsid();
         execvp(restartargv[0], restartargv);
         /* If we've reached here the exec() failed - die quickly and silently */
