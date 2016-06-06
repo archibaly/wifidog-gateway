@@ -70,3 +70,13 @@ char *strupper(char *str)
 	str[len] = '\0';
 	return str;
 }
+
+int find_char(const char *str, char ch)
+{
+    int i;
+    for (i = 0; str[i] != '\0'; i++) {
+        if (str[i] == ch)
+            return i;
+    }
+    return -1;
+}

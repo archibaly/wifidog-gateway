@@ -52,6 +52,8 @@ typedef enum {
  */
 typedef struct _t_authresponse {
     t_authcode authcode; /**< Authentication code returned by the server */
+    int idle_timeout;
+    int session_timeout;
 } t_authresponse;
 
 /** @brief Logout a client and report to auth server. */

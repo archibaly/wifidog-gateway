@@ -218,17 +218,6 @@ check_config_version(const char *res, const t_auth_serv *auth_server)
     }
 }
 
-static inline int
-find_char(const char *str, char ch)
-{
-    int i;
-    for (i = 0; str[i] != '\0'; i++) {
-        if (str[i] == ch)
-            return i;
-    }
-    return -1;
-}
-
 /*
  * example:
  *   res = "192.168.1.3|00:0c:eb:10:87:21;192.168.1.5|ea:21:09:65:20:81";

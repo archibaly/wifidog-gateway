@@ -259,6 +259,32 @@ client_copy(struct client *dst, const t_client *src)
     dst->outgoing = src->counters.outgoing;
 }
 
+static int logout_timeout_client(t_client *client, struct client *logout_clients, size_t size)
+{
+    t_client *tmp;
+    size_t logout_cnt = 0;
+
+    LOCK_CLIENT_LIST();
+    tmp = client_list_find_by_client(client);
+    if (NULL != tmp) {
+        client_copy(logout_clients + logout_cnt, tmp);
+        logout_cnt++;
+
+        fw_deny(tmp);
+        client_list_delete(tmp);
+
+        if (logout_cnt == size) {
+            logout_nclient(logout_cnt, logout_clients);
+            logout_cnt = 0;
+        }
+    } else {
+        debug(LOG_NOTICE, "Client was already removed. Not logging out.");
+    }
+    UNLOCK_CLIENT_LIST();
+
+    return logout_cnt;
+}
+
 /**Probably a misnomer, this function actually refreshes the entire client list's traffic counter,
  * re-authenticates every client with the central server and update's the central servers traffic counters and notifies it if a client has logged-out.
  * @todo Make this function smaller and use sub-fonctions
@@ -267,7 +293,7 @@ void
 fw_sync_with_authserver(void)
 {
     t_authresponse authresponse;
-    t_client *p1, *p2, *worklist, *tmp;
+    t_client *p1, *p2, *worklist;
     s_config *config = config_get_config();
 
     if (-1 == iptables_fw_counters_update()) {
@@ -285,14 +311,21 @@ fw_sync_with_authserver(void)
     client_list_dup(&worklist);
     UNLOCK_CLIENT_LIST();
 
-    struct client logout_clients[MAX_CLIENTS];
+    struct client session_timeout_clients[MAX_CLIENTS];
+    int session_timeout_clients_cnt = 0;
+    struct client idle_timeout_clients[MAX_CLIENTS];
+    int idle_timeout_clients_cnt = 0;
+
     struct client counters_clients[MAX_CLIENTS];
-    int logout_cnt = 0;
     int counters_cnt = 0;
 
     for (p1 = p2 = worklist; NULL != p1; p1 = p2) {
         p2 = p1->next;
         icmp_ping(p1->ip);
+
+        debug(LOG_INFO, "p1->idle_timeout = %d", p1->idle_timeout);
+        debug(LOG_INFO, "p1->session_timeout = %d", p1->session_timeout);
+
         client_copy(counters_clients + counters_cnt, p1);
         counters_cnt++;
         if (counters_cnt == MAX_CLIENTS) {
@@ -302,33 +335,23 @@ fw_sync_with_authserver(void)
         }
 
         time_t current_time = time(NULL);
-        if (p1->counters.last_updated + (config->checkinterval * config->clienttimeout) <= current_time) {
-            /* Timing out user */
-            LOCK_CLIENT_LIST();
-            tmp = client_list_find_by_client(p1);
-            if (NULL != tmp) {
-                client_copy(logout_clients + logout_cnt, tmp);
-                logout_cnt++;
-
-                fw_deny(tmp);
-                client_list_delete(tmp);
-
-                debug(LOG_INFO, "tmp.ip = %s", tmp->ip);
-                if (logout_cnt == MAX_CLIENTS) {
-                    logout_nclient(logout_cnt, logout_clients);
-                    logout_cnt = 0;
-                }
-            } else {
-                debug(LOG_NOTICE, "Client was already removed. Not logging out.");
-            }
-            UNLOCK_CLIENT_LIST();
+        if (current_time - p1->checkin_time >= p1->session_timeout) {
+            session_timeout_clients_cnt = logout_timeout_client(p1, session_timeout_clients, sizeof(session_timeout_clients));
+        }
+        if (p1->counters.last_updated + (config->checkinterval * config->clienttimeout) <= current_time ||
+            p1->counters.last_updated + p1->idle_timeout <= current_time) {
+            idle_timeout_clients_cnt = logout_timeout_client(p1, idle_timeout_clients, sizeof(idle_timeout_clients));
         }
     }
     if (counters_cnt > 0)
         if (config->auth_servers != NULL)
             auth_server_nrequest(&authresponse, REQUEST_TYPE_COUNTERS, counters_cnt, counters_clients);
-    if (logout_cnt > 0)
-        logout_nclient(logout_cnt, logout_clients);
+
+    if (session_timeout_clients_cnt > 0)
+        logout_nclient(session_timeout_clients_cnt, session_timeout_clients);
+
+    if (idle_timeout_clients_cnt > 0)
+        logout_nclient(idle_timeout_clients_cnt, idle_timeout_clients);
 
     client_list_destroy(worklist);
 }

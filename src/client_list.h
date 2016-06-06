@@ -55,6 +55,9 @@ typedef struct _t_client {
     int fw_connection_state;                /**< @brief Connection state in the firewall */
     int fd;                                 /**< @brief Client HTTP socket (valid only during login before one of the _http_* function is called */
     t_counters counters;                    /**< @brief Counters for input/output of the client. */
+    time_t checkin_time;
+    int idle_timeout;
+    int session_timeout;
 } t_client;
 
 /** @brief Get a new client struct, not added to the list yet */

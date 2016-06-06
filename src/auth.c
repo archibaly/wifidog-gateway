@@ -236,6 +236,9 @@ authenticate_client(request * r)
         /* Logged in successfully as a regular account */
         debug(LOG_INFO, "Got ALLOWED from central server authenticating token %s from %s at %s - "
               "adding to firewall and redirecting them to portal", client->token, client->ip, client->mac);
+        client->checkin_time = time(NULL);
+        client->idle_timeout = auth_response.idle_timeout;
+        client->session_timeout = auth_response.session_timeout;
         fw_allow(client, FW_MARK_KNOWN);
         served_this_session++;
         safe_asprintf(&urlFragment, "%sgw_id=%s&token=%s", auth_server->authserv_portal_script_path_fragment, config->gw_id, client->token);

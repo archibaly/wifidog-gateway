@@ -11,5 +11,6 @@ int is_lower(char ch);
 int is_upper(char ch);
 char *strlower(char *str);
 char *strupper(char *str);
+int find_char(const char *str, char ch);
 
 #endif /* _STR_H_ */

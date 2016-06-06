@@ -42,6 +42,7 @@
 
 #include "common.h"
 #include "safe.h"
+#include "str.h"
 #include "util.h"
 #include "wd_util.h"
 #include "auth.h"
@@ -52,6 +53,34 @@
 #include "../config.h"
 
 #include "simple_http.h"
+
+int find_idle_session_timeout(const char *response, int *idle_timeout, int *session_timeout)
+{
+    int pos = find_char(response, '\n');
+    if (pos < 0)
+        return -1;
+    else
+        pos++;
+
+    char *p;
+    char *copy = strdup(response + pos);
+    if (!copy)
+        return -1;
+
+    int n = 0;
+    while ((p = strsep(&copy, " ")) != NULL) {
+        n++;
+        if (n == 5) {
+            *idle_timeout = atoi(p);
+        }
+        if (n == 6) {
+            *session_timeout = atoi(p);
+        }
+    }
+
+    free(copy);
+    return 0;
+}
 
 /**
  * Initiates a transaction with the auth server, either to authenticate or to
@@ -136,6 +165,9 @@ auth_server_request(t_authresponse * authresponse, const char *request_type, con
     }
 
     if ((tmp = strstr(res, "Auth: "))) {
+        if (strcmp(request_type, REQUEST_TYPE_LOGIN) == 0)
+            find_idle_session_timeout(tmp, (int *)&authresponse->idle_timeout, (int *)&authresponse->session_timeout);
+
         if (sscanf(tmp, "Auth: %d", (int *)&authresponse->authcode) == 1) {
             debug(LOG_INFO, "Auth server returned authentication code %d", authresponse->authcode);
             free(res);
