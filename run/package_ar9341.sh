@@ -1,6 +1,6 @@
 #!/bin/sh
 
-RUN=wifidog-20160607.1.run
+RUN=wifidog-ar9341-20160607.1.run
 
 cp ../bin/wdctl bin
 cp ../bin/wifidog bin
