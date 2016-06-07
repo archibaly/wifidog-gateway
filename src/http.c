@@ -128,6 +128,30 @@ http_callback_404(httpd * webserver, request * r, int error_code)
 
         /* if host is not in whitelist, maybe not in conf or domain'IP changed, it will go to here */
         debug(LOG_INFO, "Check host %s is in whitelist or not", r->request.host);   /* e.g. www.example.com */
+
+        t_trusted_or_black_ip *ip;
+        t_trusted_or_black_wan_host *host;
+        for (ip = config->trustediplist; ip != NULL; ip = ip->next) {
+            if (strcmp(r->request.host, ip->ip) == 0) {
+                debug(LOG_INFO, "allow subdomain");
+                fw_allow_host(r->request.host);
+                http_send_redirect(r, tmp_url, "allow subdomain");
+                free(url);
+                free(urlFragment);
+                return;
+            }
+        }
+        for (host = config->trustedwanhostlist; host != NULL; host = host->next) {
+            if (strcasecmp(r->request.host, host->host) == 0) {
+                debug(LOG_INFO, "allow subdomain");
+                fw_allow_host(r->request.host);
+                http_send_redirect(r, tmp_url, "allow subdomain");
+                free(url);
+                free(urlFragment);
+                return;
+            }
+        }
+
         t_firewall_rule *rule;
         /* e.g. example.com is in whitelist */
         /* if request http://www.example.com/, it's not equal example.com */
