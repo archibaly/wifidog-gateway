@@ -56,22 +56,6 @@ void release_client_del(struct release_client *client)
 	free(client);
 }
 
-static void client_allow(struct release_client *client)
-{
-	t_client *tmp;
-
-	LOCK_CLIENT_LIST();
-	if ((tmp = client_list_find(client->ip, client->mac)) == NULL) {
-		debug(LOG_DEBUG, "New client for %s", client->ip);
-		client_list_add(client->ip, client->mac, client->token);
-	}
-	
-	tmp = client_list_find(client->ip, client->mac);
-	fw_allow(tmp, FW_MARK_KNOWN);
-
-	UNLOCK_CLIENT_LIST();
-}
-
 void release_client_timeout(void)
 {
 	struct release_client *cur;
@@ -85,7 +69,7 @@ void release_client_timeout(void)
 		/* send login request with a determined token */
 		auth_server_request(&authresponse, REQUEST_TYPE_LOGIN, cur->ip, cur->mac, cur->token, 0, 0, 0, 0);
 		if (authresponse.authcode == AUTH_ALLOWED)
-			client_allow(cur);
+			client_allow(cur->ip, cur->mac, cur->token, authresponse.idle_timeout, auth_response.session_timeout);
 		release_client_del(cur);
 	}
 }

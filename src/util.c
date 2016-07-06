@@ -49,6 +49,7 @@
 #include <netinet/ip.h>
 #include <netinet/ip_icmp.h>
 #include <netpacket/packet.h>
+#include <linux/wireless.h>
 
 #include <string.h>
 #include <netdb.h>
@@ -442,4 +443,30 @@ int wireless_get(const char *key, char *value, size_t size)
     }
     fclose(fp);
 	return -1;
+}
+
+int get_ssid(const char *ifname, char *ssid, size_t size)
+{
+	int sockfd;
+	struct iwreq iw;
+
+	sockfd = socket(AF_INET, SOCK_DGRAM, 0);
+
+	if (sockfd < 0) {
+		debug(LOG_ERR, strerror(errno));
+		return -1;
+	}
+
+	iw.u.essid.pointer = ssid;
+	iw.u.essid.length = size;
+
+	int ret = 0;
+	strncpy(iw.ifr_name, ifname, IFNAMSIZ);
+	if (ioctl(sockfd, SIOCGIWESSID, &iw) < 0) {
+		ret = -1;
+		debug(LOG_ERR, strerror(errno));
+	}
+
+	close(sockfd);
+	return ret;
 }

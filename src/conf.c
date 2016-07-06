@@ -69,6 +69,7 @@ static int missing_parms;
  The different configuration options */
 typedef enum {
     oBadOption,
+    oMacAuth,
     oDaemon,
     oDebugLevel,
     oExternalInterface,
@@ -123,6 +124,7 @@ static const struct {
 } keywords[] = {
     {
     "deltatraffic", oDeltaTraffic}, {
+    "macauth", oMacAuth}, {
     "daemon", oDaemon}, {
     "debuglevel", oDebugLevel}, {
     "externalinterface", oExternalInterface}, {
@@ -733,6 +735,9 @@ config_read(const char *filename)
                             debugconf.log_stderr = 1;
                         }
                     }
+                    break;
+                case oMacAuth:
+                    config.macauth = parse_boolean_value(p1);
                     break;
                 case oExternalInterface:
                     config.external_interface = safe_strdup(p1);

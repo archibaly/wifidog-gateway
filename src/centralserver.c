@@ -57,6 +57,7 @@
 int find_idle_session_timeout(const char *response, int *idle_timeout, int *session_timeout)
 {
     int pos = find_char(response, '\n');
+
     if (pos < 0)
         return -1;
     else

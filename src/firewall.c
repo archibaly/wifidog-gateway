@@ -249,6 +249,23 @@ fw_destroy(void)
     return iptables_fw_destroy();
 }
 
+void client_allow(const char *ip, const char *mac, const char *token,
+				  int idle_timeout, int session_timeout)
+{
+	t_client *tmp;
+
+	LOCK_CLIENT_LIST();
+	if ((tmp = client_list_find(ip, mac)) == NULL) {
+		debug(LOG_DEBUG, "New client for %s", ip);
+		client_list_add(ip, mac, token, idle_timeout, session_timeout);
+	}
+	
+	tmp = client_list_find(ip, mac);
+	fw_allow(tmp, FW_MARK_KNOWN);
+
+	UNLOCK_CLIENT_LIST();
+}
+
 static void
 client_copy(struct client *dst, const t_client *src)
 {

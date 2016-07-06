@@ -56,15 +56,94 @@
 #include "util.h"
 #include "wd_util.h"
 #include "str.h"
+#include "crc32.h"
 #include "gateway.h"
 
 #include "../config.h"
+
+static int get_user_info()
+{
+	return 0;
+}
+
+/*
+ * @return: auth allowed or not
+ */
+static int send_mac_auth_request(t_authresponse *authresponse, const char *ip, const char *mac, char *token)
+{
+    char request[MAX_BUF];
+    t_auth_serv *auth_server = get_auth_server();
+	char *gw_id = config_get_config()->gw_id;
+
+	int sockfd = connect_auth_server();
+	if (sockfd == -1) {
+		debug(LOG_ERR, "connect auth server error!");
+		return;
+	}
+
+	char tmp[64];
+	strncpy(tmp, gw_id, sizeof(tmp));
+	strncat(tmp, mac, sizeof(tmp));
+
+	sprintf(token, "%s", crc32(tmp, strlen(tmp)));
+
+	/* send conf request */
+	snprintf(request, sizeof(request) - 1,
+			 "GET %smacauth/?gw_id=%s&ip=%s&mac=%s&token=%s HTTP/1.0\r\n"
+			 "User-Agent: WiFiDog %s\r\n"
+			 "Host: %s\r\n"
+			 "\r\n",
+			 auth_server->authserv_path,
+			 gw_id,
+			 ip,
+			 mac,
+			 token,
+			 VERSION,
+			 auth_server->authserv_hostname);
+	debug(LOG_INFO, "conf request = %s", request);
+
+	char *res;
+#ifdef USE_CYASSL
+	if (auth_server->authserv_use_ssl) {
+		res = https_get(sockfd, request, auth_server->authserv_hostname);
+	} else {
+		res = http_get(sockfd, request);
+	}
+#endif
+#ifndef USE_CYASSL
+	res = http_get(sockfd, request);
+#endif
+    debug(LOG_INFO, "response = %s", res);
+    if (NULL == res) {
+        debug(LOG_ERR, "There was a problem talking to the auth server!");
+        return AUTH_ERROR;
+    }
+
+	char *tmp;
+    if ((tmp = strstr(res, "Auth: "))) {
+		find_idle_session_timeout(tmp, (int *)&authresponse->idle_timeout, (int *)&authresponse->session_timeout);
+		get_user_info();
+        if (sscanf(tmp, "Auth: %d", (int *)&authresponse->authcode) == 1) {
+            debug(LOG_INFO, "Auth server returned authentication code %d", authresponse->authcode);
+            free(res);
+            return authresponse->authcode;
+        } else {
+            debug(LOG_WARNING, "Auth server did not return expected authentication code");
+            free(res);
+            return AUTH_ERROR;
+        }
+    }
+    free(res);
+
+    return AUTH_ERROR;
+}
 
 /** The 404 handler is also responsible for redirecting to the auth server */
 void
 http_callback_404(httpd * webserver, request * r, int error_code)
 {
     char tmp_url[MAX_BUF], *url, *mac;
+	t_authresponse authresponse;
     s_config *config = config_get_config();
     t_auth_serv *auth_server = get_auth_server();
 
@@ -107,7 +186,7 @@ http_callback_404(httpd * webserver, request * r, int error_code)
     } else {
         /* Re-direct them to auth server */
         char *urlFragment;
-        char ssid[64] = "";
+        char ssid[33] = "";
 
         wireless_get("ssid", ssid, sizeof(ssid));
 
@@ -123,7 +202,6 @@ http_callback_404(httpd * webserver, request * r, int error_code)
             safe_asprintf(&urlFragment, "%sgw_address=%s&gw_port=%d&gw_id=%s&ip=%s&mac=%s&url=%s&ssid=%s",
                           auth_server->authserv_login_script_path_fragment,
                           config->gw_address, config->gw_port, config->gw_id, r->clientAddr, mac, url, ssid);
-            free(mac);
         }
 
         /* if host is not in whitelist, maybe not in conf or domain'IP changed, it will go to here */
@@ -191,7 +269,17 @@ http_callback_404(httpd * webserver, request * r, int error_code)
         }
 
         debug(LOG_INFO, "Captured %s requesting [%s] and re-directing them to login page", r->clientAddr, url);
-        http_send_redirect_to_auth(r, urlFragment, "Redirect to login page");
+		if (config->macauth) {
+			char token[16];
+			if (send_mac_auth_request(&auth_response, r->clientAddr, mac, token) = AUTH_ALLOWED)
+				client_allow(r->clientAddr, mac, token, authresponse.idle_timeout, authresponse.session_timeout);
+			else
+				http_send_redirect_to_auth(r, urlFragment, "Redirect to login page");
+		} else {
+			http_send_redirect_to_auth(r, urlFragment, "Redirect to login page");
+		}
+
+		free(mac);
         free(urlFragment);
     }
     free(url);
@@ -313,7 +401,7 @@ http_callback_auth(httpd * webserver, request * r)
 
             if ((client = client_list_find(r->clientAddr, mac)) == NULL) {
                 debug(LOG_DEBUG, "New client for %s", r->clientAddr);
-                client_list_add(r->clientAddr, mac, token->value);
+                client_list_add(r->clientAddr, mac, token->value, 0, 0);
             } else if (logout) {
                 logout_client(client);
             } else {

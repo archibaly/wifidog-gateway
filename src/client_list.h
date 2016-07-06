@@ -76,7 +76,7 @@ void client_list_insert_client(t_client *);
 void client_list_destroy(t_client *);
 
 /** @brief Adds a new client to the connections list */
-t_client *client_list_add(const char *, const char *, const char *);
+t_client *client_list_add(const char *, const char *, const char *, int, int);
 
 /** Duplicate the whole client list to process in a thread safe way */
 int client_list_dup(t_client **);

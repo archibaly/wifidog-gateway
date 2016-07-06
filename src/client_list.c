@@ -113,7 +113,8 @@ client_list_insert_client(t_client * client)
  * @return Pointer to the client we just created
  */
 t_client *
-client_list_add(const char *ip, const char *mac, const char *token)
+client_list_add(const char *ip, const char *mac, const char *token,
+				int idle_timeout, int session_timeout)
 {
     t_client *curclient;
 
@@ -129,6 +130,9 @@ client_list_add(const char *ip, const char *mac, const char *token)
     curclient->counters.outgoing = 0;
     curclient->counters.outgoing_history = 0;
     curclient->counters.last_updated = time(NULL);
+	curclient->checkin_time = time(NULL);
+	curclient->idle_timeout = idle_timeout;
+	curclient->session_timeout = session_timeout;
 
     client_list_insert_client(curclient);
 

@@ -39,7 +39,8 @@ libgateway_a_SOURCES = commandline.c \
 	openmax.c \
 	popen.c \
 	pid.c \
-	wd_util.c
+	wd_util.c \
+	crc32.c
 
 noinst_HEADERS = commandline.h \
 	common.h \
@@ -65,7 +66,8 @@ noinst_HEADERS = commandline.h \
 	openmax.h \
 	popen.h \
 	pid.h \
-	wd_util.h
+	wd_util.h \
+	crc32.h
 
 wdctl_LDADD = libgateway.a
 

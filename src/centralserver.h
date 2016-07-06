@@ -31,20 +31,21 @@
 #include "auth.h"
 
 /** @brief Ask the central server to login a client */
-#define REQUEST_TYPE_LOGIN      "login"
+#define REQUEST_TYPE_LOGIN	"login"
 /** @brief Notify the the central server of a client logout */
-#define REQUEST_TYPE_LOGOUT     "logout"
+#define REQUEST_TYPE_LOGOUT	"logout"
 /** @brief Update the central server's traffic counters */
-#define REQUEST_TYPE_COUNTERS   "counters"
-
+#define REQUEST_TYPE_COUNTERS	"counters"
 /** @brief Sent when the user's token is denied by the central server */
-#define GATEWAY_MESSAGE_DENIED     "denied"
-/** @brief Sent when the user's token is accepted, but user is on probation  */
-#define GATEWAY_MESSAGE_ACTIVATE_ACCOUNT     "activate"
+#define GATEWAY_MESSAGE_DENIED	"denied"
+/** @brief Sent when the user's token is accepted, but user is on probation */
+#define GATEWAY_MESSAGE_ACTIVATE_ACCOUNT	"activate"
 /** @brief  Sent when the user's token is denied by the central server because the probation period is over */
-#define GATEWAY_MESSAGE_ACCOUNT_VALIDATION_FAILED     "failed_validation"
-/** @brief Sent after the user performed a manual log-out on the gateway  */
-#define GATEWAY_MESSAGE_ACCOUNT_LOGGED_OUT     "logged-out"
+#define GATEWAY_MESSAGE_ACCOUNT_VALIDATION_FAILED	"failed_validation"
+/** @brief Sent after the user performed a manual log-out on the gateway */
+#define GATEWAY_MESSAGE_ACCOUNT_LOGGED_OUT	"logged-out"
+
+int find_idle_session_timeout(const char *response, int *idle_timeout, int *session_timeout);
 
 /** @brief Initiates a transaction with the auth server */
 t_authcode auth_server_request(t_authresponse * authresponse,
